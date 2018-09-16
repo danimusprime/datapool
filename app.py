@@ -23,8 +23,8 @@ connection = psycopg2.connect(
     user= 'process.env.USER',
     password= 'process.env.PASSWORD')
 print ('status is: ') + str(connection.status)
-except:
-print ('unable to connect')
+except
+    print ('unable to connect')
 
 cursor = connection.cursor()
 
@@ -41,7 +41,7 @@ try:
                 "INSERT INTO tweets (tweet_id, text, screen_name, author_id, created_at, inserted_at) VALUES (%s, %s, %s, %s, %s, current_timestamp);", (s.id, s.text, s.author.screen_name, s.author.id, s.created_at))
             connection.commit()
 except tweepy.error.TweepError:
-    print "Whoops, could not fetch news!"
+    print ("Whoops, could not fetch news!")
 except UnicodeEncodeError:
     pass
 finally:
