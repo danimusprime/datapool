@@ -16,8 +16,7 @@ import psycopg2
   api = tweepy.API(auth)
 
 # Postgresql initialization
-try:
-    connection = psycopg2.connect(
+connection = psycopg2.connect(
         database= 'process.env.DATABASE'
         host= 'process.env.HOST'
         port= 'process.env.PORT'
@@ -29,17 +28,8 @@ try:
 
 cursor = connection.cursor()
 
-class MyStreamListener(tweepy.StreamListener)
-    def on_status (self, status):
-        print (status.text)
-
-
-        # MyStream.filter(follow=['25073877']) #realdonaldtrump
-        # MyStream.filter(follow=['14903018']) #batenkaitos
-
-
 try:
-    statuses = api.home_timeline(api.me(@batenkaitos).screen_name, '<NAME OF TIMELINE?>')
+    statuses = api.user_timeline('14903018')
     for s in statuses:
         # To remove duplicate entries
         # See http://initd.org/psycopg/docs/faq.html for "not all arguments converted during string formatting"
