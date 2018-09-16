@@ -23,8 +23,8 @@ connection = psycopg2.connect(
     user= 'process.env.USER',
     password= 'process.env.PASSWORD')
 print ('status is: ') + str(connection.status)
-except connectionError:
-    print ('unable to connect')
+    #except connection
+    #print ('unable to connect')
 
 cursor = connection.cursor()
 
