@@ -19,7 +19,7 @@ api = tweepy.API(auth)
 connection = psycopg2.connect(
     host= "ec2-54-227-241-179.compute-1.amazonaws.com",
     dbname= "process.env.Database",
-    port= "5432,
+    port= "5432",
     user= "process.env.User",
     password= "process.env.Password")
     #print ('status is: ') + str(connection.status)
