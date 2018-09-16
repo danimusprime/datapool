@@ -17,11 +17,11 @@ api = tweepy.API(auth)
 
 # Postgresql initialization
 connection = psycopg2.connect(
-    database= 'process.env.Database',
-    host= 'process.env.Host',
-    port= 'process.env.Port',
-    user= 'process.env.User',
-    password= 'process.env.Password')
+    Database= 'process.env.Database',
+    Host= 'process.env.Host',
+    Port= 'process.env.Port',
+    User= 'process.env.User',
+    Password= 'process.env.Password')
 print ('status is: ') + str(connection.status)
     #except connection
     #print ('unable to connect')
