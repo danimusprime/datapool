@@ -19,7 +19,7 @@ api = tweepy.API(auth)
 connection = psycopg2.connect(
     host= 'process.env.Host',
     database= 'process.env.DATABASE_URL',
-    port= 'process.env.Port',
+    #port= 'process.env.Port',
     user= 'process.env.User',
     password= 'process.env.Password')
     #print ('status is: ') + str(connection.status)
