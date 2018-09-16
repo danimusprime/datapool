@@ -28,6 +28,8 @@ connection = psycopg2.connect(
 
 cursor = connection.cursor()
 
+#CREATE TABLE tweets (id SERIAL PRIMARY KEY, tweet_id BIGINT NOT NULL, text VARCHAR NOT NULL, screen_name VARCHAR NOT NULL, author_id INTEGER, created_at VARCHAR NOT NULL, inserted_at TIMESTAMP NOT NULL)
+
 try:
     statuses = api.user_timeline('14903018')
     for s in statuses:
