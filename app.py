@@ -20,7 +20,7 @@ api = tweepy.API(auth)
 
 # Postgresql initialization
 connection = psycopg2.connect(
-    host= "process.env.Host",
+    host= "ec2-54-227-241-179.compute-1.amazonaws.com",
     dbname= "process.env.Database",
     port= "5432",
     user= "process.env.User",
