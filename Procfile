@@ -1,1 +1,1 @@
-worker: python app.js
+worker: app.py
