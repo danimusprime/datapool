@@ -29,8 +29,17 @@ try:
 
 cursor = connection.cursor()
 
+class MyStreamListener(tweepy.StreamListener)
+    def on_status (self, status):
+        print (status.text)
+
+
+        # MyStream.filter(follow=['25073877']) #realdonaldtrump
+        # MyStream.filter(follow=['14903018']) #batenkaitos
+
+
 try:
-    statuses = api.list_timeline(api.me(@batenkaitos).screen_name, '<NAME OF TIMELINE?>')
+    statuses = api.home_timeline(api.me(@batenkaitos).screen_name, '<NAME OF TIMELINE?>')
     for s in statuses:
         # To remove duplicate entries
         # See http://initd.org/psycopg/docs/faq.html for "not all arguments converted during string formatting"
