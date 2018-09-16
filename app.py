@@ -18,7 +18,7 @@ api = tweepy.API(auth)
 # Postgresql initialization
 connection = psycopg2.connect(
     host= "Host",
-    database= "DATABASE_URL",
+    database= "Database",
     port= "Port",
     user= "User",
     password= "Password")
