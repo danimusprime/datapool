@@ -28,10 +28,10 @@ connection = psycopg2.connect(
 
 cursor = connection.cursor()
 
-CREATE TABLE tweets (id SERIAL PRIMARY KEY, tweet_id BIGINT NOT NULL, text VARCHAR NOT NULL, screen_name VARCHAR NOT NULL, author_id INTEGER, created_at VARCHAR NOT NULL, inserted_at TIMESTAMP NOT NULL)
+#CREATE TABLE tweets (id SERIAL PRIMARY KEY, tweet_id BIGINT NOT NULL, text VARCHAR NOT NULL, screen_name VARCHAR NOT NULL, author_id INTEGER, created_at VARCHAR NOT NULL, inserted_at TIMESTAMP NOT NULL)
 
 try:
-    statuses = api.user_timeline('14903018')
+    statuses = api.user_timeline('124297267')  #14903018 batenkaitos
     for s in statuses:
         # To remove duplicate entries
         # See http://initd.org/psycopg/docs/faq.html for "not all arguments converted during string formatting"
