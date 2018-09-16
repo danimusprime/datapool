@@ -5,15 +5,15 @@ import psycopg2
 # psycopg2 API doc here: http://initd.org/psycopg/docs/
 
 # Keys
- consumer_key = "process.env.consumer_key",
- consumer_secret: "process.env.consumer_secret",
- access_token_key: "process.env.access_token_key",
- access_token_secret: "process.env.access_token_secret"
+consumer_key = "process.env.consumer_key",
+consumer_secret: "process.env.consumer_secret",
+access_token_key: "process.env.access_token_key",
+access_token_secret: "process.env.access_token_secret"
 
 # Twitter initialization
- auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
- auth.set_access_token(access_token, access_token_secret)
- api = tweepy.API(auth)
+auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+auth.set_access_token(access_token, access_token_secret)
+api = tweepy.API(auth)
 
 # Postgresql initialization
 connection = psycopg2.connect(
