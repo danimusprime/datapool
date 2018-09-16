@@ -6,7 +6,8 @@ __pycache__/
 # C extensions
 *.so
 
-.env 
+.database.ini
+.env
 
 # Distribution / packaging
 .Python
