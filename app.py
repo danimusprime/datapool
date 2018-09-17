@@ -1,5 +1,6 @@
 import tweepy
 import psycopg2
+import os
 
 # Tweepy API doc here: http://pythonhosted.org/tweepy/html/api.html
 # psycopg2 API doc here: http://initd.org/psycopg/docs/
