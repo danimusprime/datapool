@@ -24,7 +24,7 @@ connection = psycopg2.connect(
     dbname= "dbname1",
     port= "5432",
     user= "user1",
-    password= 'password1")
+    password= "password1")
     #print ('status is: ') + str(connection.status)
     #except connection
     #print ('unable to connect')
