@@ -25,8 +25,8 @@ connection = psycopg2.connect(
     host= "ec2-54-227-241-179.compute-1.amazonaws.com",
     dbname= "dbname1",
     port= "5432",
-    user= "user",
-    password= "password")
+    user= "User",
+    password= "Password")
     #print ('status is: ') + str(connection.status)
 #except:
     #print ('unable to connect')
