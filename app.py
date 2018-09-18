@@ -21,17 +21,17 @@ auth.set_access_token(access_token_key, access_token_secret)
 api = tweepy.API(auth)
 
 # Postgresql initialization
-connection = psycopg2.connect(
-    host= "ec2-54-227-241-179.compute-1.amazonaws.com",
-    dbname= "dbname",
-    port= "5432",
-    user= "User",
-    password= "Password")
+connection = psycopg2.connect(DATABASE_URL, sslmode='require')
+    #host= "ec2-54-227-241-179.compute-1.amazonaws.com",
+    #dbname= "dbname",
+    #port= "5432",
+    #user= "User",
+    #password= "Password")
     #print ('status is: ') + str(connection.status)
 #except:
     #print ('unable to connect')
 
-cursor = connection.cursor(DATABASE_URL, sslmode='require')
+cursor = connection.cursor()
 
 #CREATE TABLE tweets (id SERIAL PRIMARY KEY, tweet_id BIGINT NOT NULL, text VARCHAR NOT NULL, screen_name VARCHAR NOT NULL, author_id INTEGER, created_at VARCHAR NOT NULL, inserted_at TIMESTAMP NOT NULL)
 
