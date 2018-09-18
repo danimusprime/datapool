@@ -1,19 +1,19 @@
 import tweepy
-import psycopg2
+import psycopg2-binary
 import os
 
 # Tweepy API doc here: http://pythonhosted.org/tweepy/html/api.html
 # psycopg2 API doc here: http://initd.org/psycopg/docs/
 
 # Keys
-DATABASE_URL = os.environ['postgres://oqszjcsmlibdef:7e6b6937d0465a94f1b462b9f0ef59e2018971b0bc9d54a6e8067905bd707b5d@ec2-54-227-241-179.compute-1.amazonaws.com:5432/dvk43ks0pskbs']
-os.environ["consumer_key"] = "consumer_key",
-os.environ["consumer_secret"] = "consumer_secret",
-os.environ["access_token_key"] = "access_token_key",
-os.environ["access_token_secret"] = "access_token_secret",
-os.environ["password1"] = "process.env.Password",
-os.environ["user1"] = "User",
-os.environ["dbname1"] = "Database"
+DATABASE_URL = os.environ['DATABASE_URL'],
+consumer_key = os.environ["consumer_key"],
+consumer_secret = os.environ["consumer_secret"],
+access_token_key = os.environ["access_token_key"],
+access_token_secret = os.environ["access_token_secret"],
+password1 = os.environ["Password"],
+user1 = os.environ["user"],
+dbname = os.environ["Database"]
 
 # Twitter initialization
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
