@@ -6,6 +6,7 @@ import os
 # psycopg2 API doc here: http://initd.org/psycopg/docs/
 
 # Keys
+DATABASE_URL = os.environ['postgres://oqszjcsmlibdef:7e6b6937d0465a94f1b462b9f0ef59e2018971b0bc9d54a6e8067905bd707b5d@ec2-54-227-241-179.compute-1.amazonaws.com:5432/dvk43ks0pskbs']
 os.environ["consumer_key"] = "consumer_key",
 os.environ["consumer_secret"] = "consumer_secret",
 os.environ["access_token_key"] = "access_token_key",
@@ -26,11 +27,11 @@ connection = psycopg2.connect(
     port= "5432",
     user= "user1",
     password= "password1")
-    print ('status is: ') + str(connection.status)
-except:
-    print ('unable to connect')
+    #print ('status is: ') + str(connection.status)
+#except:
+    #print ('unable to connect')
 
-cursor = connection.cursor()
+cursor = connection.cursor(DATABASE_URL, sslmode='require')
 
 #CREATE TABLE tweets (id SERIAL PRIMARY KEY, tweet_id BIGINT NOT NULL, text VARCHAR NOT NULL, screen_name VARCHAR NOT NULL, author_id INTEGER, created_at VARCHAR NOT NULL, inserted_at TIMESTAMP NOT NULL)
 
