@@ -11,8 +11,8 @@ consumer_key = os.environ["consumer_key"],
 consumer_secret = os.environ["consumer_secret"],
 access_token_key = os.environ["access_token_key"],
 access_token_secret = os.environ["access_token_secret"],
-Password1 = os.environ["Password"],
-User1 = os.environ["User"],
+Password = os.environ["Password"],
+User = os.environ["User"],
 dbname = os.environ["Database"]
 
 # Twitter initialization
@@ -23,10 +23,10 @@ api = tweepy.API(auth)
 # Postgresql initialization
 connection = psycopg2.connect(
     host= "ec2-54-227-241-179.compute-1.amazonaws.com",
-    dbname= "dbname1",
+    dbname= "dbname",
     port= "5432",
-    user= "User1",
-    password= "Password1")
+    user= "User",
+    password= "Password")
     #print ('status is: ') + str(connection.status)
 #except:
     #print ('unable to connect')
