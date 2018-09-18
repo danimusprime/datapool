@@ -12,7 +12,7 @@ consumer_secret = os.environ["consumer_secret"],
 access_token_key = os.environ["access_token_key"],
 access_token_secret = os.environ["access_token_secret"],
 password = os.environ["Password"],
-user = os.environ["user"],
+user = os.environ["User"],
 dbname = os.environ["Database"]
 
 # Twitter initialization
