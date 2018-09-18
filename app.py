@@ -1,5 +1,5 @@
 import tweepy
-import psycopg2-binary
+import psycopg2
 import os
 
 # Tweepy API doc here: http://pythonhosted.org/tweepy/html/api.html
