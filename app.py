@@ -25,7 +25,7 @@ connection = pg2.connect(
     host= "ec2-54-227-241-179.compute-1.amazonaws.com",
     dbname= "dbname",
     port= "5432",
-    user= "User",
+    user= "postgres",
     password= "Password")
     #print ('status is: ') + str(connection.status)
 #except:
