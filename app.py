@@ -11,8 +11,8 @@ consumer_key = os.environ["consumer_key"],
 consumer_secret = os.environ["consumer_secret"],
 access_token_key = os.environ["access_token_key"],
 access_token_secret = os.environ["access_token_secret"],
-Password = os.environ["Password"],
-User = os.environ["User"],
+password1 = os.environ["Password"],
+user1 = os.environ["User"],
 dbname = os.environ["Database"]
 
 # Twitter initialization
@@ -25,8 +25,8 @@ connection = pg2.connect(
     host= "ec2-54-227-241-179.compute-1.amazonaws.com",
     dbname= "dbname",
     port= "5432",
-    user= "postgres",
-    password= "Password")
+    user= "user1",
+    password= "password1")
     #print ('status is: ') + str(connection.status)
 #except:
     #print ('unable to connect')
