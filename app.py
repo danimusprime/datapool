@@ -21,12 +21,12 @@ auth.set_access_token(access_token_key, access_token_secret)
 api = tweepy.API(auth)
 
 # Postgresql initialization
-connection = pg2.connect(database = DATABASE_URL, user = User, password = Password)
-    #host= "ec2-54-227-241-179.compute-1.amazonaws.com",
-    #dbname= "dbname",
-    #port= "5432",
-    #user= "User",
-    #password= "Password")
+connection = pg2.connect(
+    host= "ec2-54-227-241-179.compute-1.amazonaws.com",
+    dbname= "dbname",
+    port= "5432",
+    user= "User",
+    password= "Password")
     #print ('status is: ') + str(connection.status)
 #except:
     #print ('unable to connect')
