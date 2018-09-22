@@ -7,13 +7,13 @@ import os
 
 # Keys
 DATABASE_URL = os.environ['DATABASE_URL'],
-consumer_key = os.environ.get['consumer_key'],
-consumer_secret = os.environ.get['consumer_secret'],
-access_token_key = os.environ.get['access_token_key'],
-access_token_secret = os.environ.get['access_token_secret'],
-password1 = os.environ.get['Password'],
-user1 = os.environ.get['User'],
-dbname = os.environ.get['Database']
+consumer_key = os.environ['consumer_key'],
+consumer_secret = os.environ['consumer_secret'],
+access_token_key = os.environ['access_token_key'],
+access_token_secret = os.environ['access_token_secret'],
+password1 = os.environ['Password'],
+user1 = os.environ['User'],
+dbname = os.environ['Database']
 
 # Twitter initialization
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
