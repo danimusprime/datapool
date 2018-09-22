@@ -6,14 +6,14 @@ import os
 # psycopg2 API doc here: http://initd.org/psycopg/docs/
 
 # Keys
-DATABASE_URL = os.environ.get['DATABASE_URL'],
-consumer_key = os.environ.get["consumer_key"],
-consumer_secret = os.environ.get["consumer_secret"],
-access_token_key = os.environ.get["access_token_key"],
-access_token_secret = os.environ.get["access_token_secret"],
-password1 = os.environ.get["Password"],
-user1 = os.environ.get["User"],
-dbname = os.environ.get["Database"]
+DATABASE_URL = os.environ['DATABASE_URL'],
+consumer_key = os.environ.get['consumer_key'],
+consumer_secret = os.environ.get['consumer_secret'],
+access_token_key = os.environ.get['access_token_key'],
+access_token_secret = os.environ.get['access_token_secret'],
+password1 = os.environ.get['Password'],
+user1 = os.environ.get['User'],
+dbname = os.environ.get['Database']
 
 # Twitter initialization
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
@@ -22,11 +22,11 @@ api = tweepy.API(auth)
 
 # Postgresql initialization
 connection = pg2.connect(
-    host= "ec2-54-227-241-179.compute-1.amazonaws.com",
-    dbname= "dbname",
-    port= "5432",
-    user= "user1",
-    password= "password1")
+    host= 'ec2-54-227-241-179.compute-1.amazonaws.com',
+    dbname= 'dbname',
+    port= '5432',
+    user= 'user1',
+    password= 'password1')
     #print ('status is: ') + str(connection.status)
 #except:
     #print ('unable to connect')
@@ -46,7 +46,7 @@ try:
                 "INSERT INTO tweets (tweet_id, text, screen_name, author_id, created_at, inserted_at) VALUES (%s, %s, %s, %s, %s, current_timestamp);", (s.id, s.text, s.author.screen_name, s.author.id, s.created_at))
             connection.commit()
 except tweepy.error.TweepError:
-    print ("Whoops, could not fetch news!")
+    print ('Whoops, could not fetch news!')
 except UnicodeEncodeError:
     pass
 finally:
