@@ -6,7 +6,7 @@ import os
 # psycopg2 API doc here: http://initd.org/psycopg/docs/
 
 # Keys
-'DBurl'= os.environ.get('DATABASE_URL')
+DBurl = os.environ.get('DATABASE_URL')
 'consumer_key'= os.environ.get('consumer_key')
 'consumer_secret'= os.environ.get('consumer_secret')
 'access_token_key'= os.environ.get('access_token_key')
