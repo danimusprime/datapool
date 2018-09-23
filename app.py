@@ -6,13 +6,13 @@ import os
 # psycopg2 API doc here: http://initd.org/psycopg/docs/
 
 # Keys
-'DBurl': os.environ.get('DATABASE_URL'),
-'consumer_key': os.environ.get('consumer_key'),
-'consumer_secret': os.environ.get('consumer_secret'),
-'access_token_key': os.environ.get('access_token_key'),
-'access_token_secret': os.environ.get('access_token_secret'),
-'password1': os.environ.get('Password'),
-'user1': os.environ.get('User'),
+'DBurl': os.environ.get('DATABASE_URL')
+'consumer_key': os.environ.get('consumer_key')
+'consumer_secret': os.environ.get('consumer_secret')
+'access_token_key': os.environ.get('access_token_key')
+'access_token_secret': os.environ.get('access_token_secret')
+'password1': os.environ.get('Password')
+'user1': os.environ.get('User')
 'dbname': os.environ.get('Database')
 
 # Twitter initialization
