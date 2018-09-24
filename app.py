@@ -34,15 +34,15 @@ cursor = conn.cursor()
 #CREATE TABLE tweets (id SERIAL PRIMARY KEY, tweet_id BIGINT NOT NULL, text VARCHAR NOT NULL, screen_name VARCHAR NOT NULL, author_id INTEGER, created_at VARCHAR NOT NULL, inserted_at TIMESTAMP NOT NULL)
 
 try:
-    statuses = tweepy.cursor(API.statuses_lookup, id=14903018)
-    #for status in statuses.items(200):
+    statuses = api.statuses_lookup, id=14903018)
+    for status in statuses:
         # To remove duplicate entries
         # See http://initd.org/psycopg/docs/faq.html for "not all arguments converted during string formatting"
-    cursor.execute("SELECT id FROM tweets WHERE text = %s;", [s.text])
-    if cursor.rowcount == 0:
-        cursor.execute(
-            "INSERT INTO tweets (tweet_id, text, screen_name, author_id, created_at, inserted_at) VALUES (%s, %s, %s, %s, %s, current_timestamp);", (s.id, s.text, s.author.screen_name, s.author.id, s.created_at))
-        conn.commit()
+        cursor.execute("SELECT id FROM tweets WHERE text = %s;", [s.text])
+        if cursor.rowcount == 0:
+            cursor.execute(
+                "INSERT INTO tweets (tweet_id, text, screen_name, author_id, created_at, inserted_at) VALUES (%s, %s, %s, %s, %s, current_timestamp);", (s.id, s.text, s.author.screen_name, s.author.id, s.created_at))
+                conn.commit()
 except tweepy.error.TweepError:
     print ('Whoops, could not fetch news!')
 except UnicodeEncodeError:
