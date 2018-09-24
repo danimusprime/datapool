@@ -31,7 +31,7 @@ conn = pg2.connect(DATABASE_URL, sslmode='require')
 #except:
     #print ('unable to connect')
 
-cursor = connection.cursor()
+cursor = conn.cursor()
 
 #CREATE TABLE tweets (id SERIAL PRIMARY KEY, tweet_id BIGINT NOT NULL, text VARCHAR NOT NULL, screen_name VARCHAR NOT NULL, author_id INTEGER, created_at VARCHAR NOT NULL, inserted_at TIMESTAMP NOT NULL)
 
