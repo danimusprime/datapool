@@ -38,11 +38,10 @@ try:
     for s in statuses:
         print (s.id, s.text, s.author.screen_name, s.author.id, s.created_at)
         # previous try return self._statuses_lookup(list_to_csv(id_=14903018), include_entities
-        cursor.execute("SELECT id FROM tweets WHERE text = %s;", [s.text])
-        if cursor.rowcount == 0:
-            cursor.execute(
-                "INSERT INTO tweets (tweet_id, text, screen_name, author_id, created_at, inserted_at) VALUES (%s, %s, %s, %s, %s, current_timestamp);", (s.id, s.text, s.author.screen_name, s.author.id, s.created_at))
-            conn.commit()
+        #cursor.execute("SELECT id FROM tweets WHERE text = %s;", [s.text])
+        #if cursor.rowcount == 0:
+        cursor.execute("INSERT INTO tweets (tweet_id, text, screen_name, author_id, created_at, inserted_at) VALUES (%s, %s, %s, %s, %s, current_timestamp);", (s.id, s.text, s.author.screen_name, s.author.id, s.created_at))
+        conn.commit()
 except tweepy.error.TweepError:
     print ('Whoops, could not fetch news!')
 except UnicodeEncodeError:
