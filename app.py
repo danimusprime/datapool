@@ -36,7 +36,8 @@ cursor = conn.cursor()
 try:
     statuses = api.statuses_lookup(id_=14903018, include_entities=False, trim_user=False, map_=False)
     for s in statuses:
-        return self._statuses_lookup(list_to_csv(id_=14903018), include_entities
+        print (s.id, s.text, s.author.screen_name, s.author.id, s.created_at)
+        # previous try return self._statuses_lookup(list_to_csv(id_=14903018), include_entities
         cursor.execute("SELECT id FROM tweets WHERE text = %s;", [s.text])
         if cursor.rowcount == 0:
             cursor.execute(
