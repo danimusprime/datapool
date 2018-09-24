@@ -34,8 +34,8 @@ cursor = conn.cursor()
 #CREATE TABLE tweets (id SERIAL PRIMARY KEY, tweet_id BIGINT NOT NULL, text VARCHAR NOT NULL, screen_name VARCHAR NOT NULL, author_id INTEGER, created_at VARCHAR NOT NULL, inserted_at TIMESTAMP NOT NULL)
 
 try:
-    statuses = tweepy.cursor(API.statuses_timeline(id=14903018, False, False, False)
-    for s in statuses:
+    statuses = tweepy.cursor(API.statuses_lookup, id=14903018)
+    #for status in statuses.items(200):
         # To remove duplicate entries
         # See http://initd.org/psycopg/docs/faq.html for "not all arguments converted during string formatting"
         cursor.execute("SELECT id FROM tweets WHERE text = %s;", [s.text])
