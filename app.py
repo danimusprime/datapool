@@ -27,9 +27,9 @@ conn = pg2.connect(DATABASE_URL, sslmode='require')
     #port= '5432',
     #user= 'user',
     #password= 'password')
-    print (('status is: ') + str(connection.status))
-    except:
-    print ('unable to connect')
+print (('status is: ') + str(connection.status))
+except:
+print ('unable to connect')
 
 cursor = conn.cursor()
 
