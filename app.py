@@ -34,10 +34,8 @@ cursor = conn.cursor()
 #CREATE TABLE tweets (id SERIAL PRIMARY KEY, tweet_id BIGINT NOT NULL, text VARCHAR NOT NULL, screen_name VARCHAR NOT NULL, author_id INTEGER, created_at VARCHAR NOT NULL, inserted_at TIMESTAMP NOT NULL)
 
 try:
-    statuses = api.statuses_lookup(14903018, False, False, False)
+    statuses = api.statuses_lookup(id_=14903018, include_entities=False, trim_user=False, map_=False)
     for s in statuses:
-        # To remove duplicate entries
-        # See http://initd.org/psycopg/docs/faq.html for "not all arguments converted during string formatting"
         cursor.execute("SELECT id FROM tweets WHERE text = %s;", [s.text])
         if cursor.rowcount == 0:
             cursor.execute(
