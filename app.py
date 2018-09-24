@@ -6,13 +6,13 @@ import os
 # psycopg2 API doc here: http://initd.org/psycopg/docs/
 
 # Keys
-DBurl= os.environ.get('DATABASE_URL')
+DATABASE_URL= os.environ.get('DATABASE_URL')
 consumer_key = os.environ.get('consumer_key')
 consumer_secret = os.environ.get('consumer_secret')
 access_token_key = os.environ.get('access_token_key')
 access_token_secret = os.environ.get('access_token_secret')
-password1= os.environ.get('Password')
-user1= os.environ.get('User')
+password= os.environ.get('Password')
+user= os.environ.get('User')
 dbname= os.environ.get('Database')
 
 # Twitter initialization
@@ -21,12 +21,12 @@ auth.set_access_token(access_token_key, access_token_secret)
 api = tweepy.API(auth)
 
 # Postgresql initialization
-connection = pg2.connect(
+conn = pg2.connect(
     host= 'ec2-54-227-241-179.compute-1.amazonaws.com',
     dbname= 'dbname',
     port= '5432',
-    user= 'user1',
-    password= 'password1')
+    user= 'user',
+    password= 'password')
     #print ('status is: ') + str(connection.status)
 #except:
     #print ('unable to connect')
