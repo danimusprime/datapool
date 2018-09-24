@@ -42,7 +42,7 @@ try:
     if cursor.rowcount == 0:
         cursor.execute(
             "INSERT INTO tweets (tweet_id, text, screen_name, author_id, created_at, inserted_at) VALUES (%s, %s, %s, %s, %s, current_timestamp);", (s.id, s.text, s.author.screen_name, s.author.id, s.created_at))
-        connection.commit()
+        conn.commit()
 except tweepy.error.TweepError:
     print ('Whoops, could not fetch news!')
 except UnicodeEncodeError:
