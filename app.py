@@ -36,9 +36,14 @@ cursor = conn.cursor()
 try:
     statuses = api.statuses_lookup(id_=14903018, include_entities=False, trim_user=False, map_=False)
     for s in statuses:
+<<<<<<< HEAD
         print (s.id, s.text, s.author.screen_name, s.author.id, s.created_at)
         # previous try return self._statuses_lookup(list_to_csv(id_=14903018), include_entities
         cursor.execute("SELECT id FROM tweets WHERE text = %s;", [s.text])
+=======
+        return self._statuses_lookup(cursor.execute("SELECT id FROM tweets WHERE text = %s;", [s.text]))
+            #list_to_csv(id_=14903018), include_entities
+>>>>>>> fd0dfb7093a1b1bdd1374f4d3080193b02d3e569
         if cursor.rowcount == 0:
             cursor.execute(
                 "INSERT INTO tweets (tweet_id, text, screen_name, author_id, created_at, inserted_at) VALUES (%s, %s, %s, %s, %s, current_timestamp);", (s.id, s.text, s.author.screen_name, s.author.id, s.created_at))
