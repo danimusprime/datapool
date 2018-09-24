@@ -27,16 +27,16 @@ conn = pg2.connect(DATABASE_URL, sslmode='require')
     #port= '5432',
     #user= 'user',
     #password= 'password')
-    #print ('status is: ') + str(connection.status)
-#except:
-    #print ('unable to connect')
+    print (('status is: ') + str(connection.status))
+    except:
+    print ('unable to connect')
 
 cursor = conn.cursor()
 
 #CREATE TABLE tweets (id SERIAL PRIMARY KEY, tweet_id BIGINT NOT NULL, text VARCHAR NOT NULL, screen_name VARCHAR NOT NULL, author_id INTEGER, created_at VARCHAR NOT NULL, inserted_at TIMESTAMP NOT NULL)
 
 try:
-    statuses = API.list_timeline(api.me().screen_name, 'National Parks')
+    statuses = tweepy.cursor(API.statuses_timeline(id=14903018, False, False, False)
     for s in statuses:
         # To remove duplicate entries
         # See http://initd.org/psycopg/docs/faq.html for "not all arguments converted during string formatting"
@@ -51,4 +51,4 @@ except UnicodeEncodeError:
     pass
 finally:
     cursor.close()
-    connection.close()
+    conn.close()
