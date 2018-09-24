@@ -27,7 +27,7 @@ conn = pg2.connect(DATABASE_URL, sslmode='require')
     #port= '5432',
     #user= 'user',
     #password= 'password')
-print (('status is: ') + str(conn.status))
+print ('status is: ') + str(conn.status)
 
 cursor = conn.cursor()
 
@@ -36,6 +36,7 @@ cursor = conn.cursor()
 try:
     statuses = api.statuses_lookup(id_=14903018, include_entities=False, trim_user=False, map_=False)
     for s in statuses:
+        return self._statuses_lookup(list_to_csv(id_=14903018), include_entities
         cursor.execute("SELECT id FROM tweets WHERE text = %s;", [s.text])
         if cursor.rowcount == 0:
             cursor.execute(
