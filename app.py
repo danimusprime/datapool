@@ -1,4 +1,8 @@
-import tweepy
+from tweepy.streaming import StreamListener
+from tweepy import API
+from tweepy import Stream
+from tweepy import OAuthHandler
+from tweepy import Cursor
 import psycopg2 as pg2
 import os
 from pprint import pprint
@@ -15,22 +19,32 @@ import credentials
 # user = os.environ.get('User')
 # dbname = os.environ.get('Database')
 
+# this class will authenticate twitter, and
+class TwitterAuthenticator():
+    def authenticate_twitter_app(self):
+        auth = OAuthHandler(credentials.consumer_key, credentials.consumer_secret)
+        auth.set_access_token(credentials.access_token_key, credentials.access_token_secret)
+        return auth
+
+
 class twitter_streamer():
     '''
     class for streaming and processing live tweets
     '''
 
+    def __init__(self):
+        self.twitter_authenticator = TwitterAuthenticator()
+
     def stream_tweets(self, fetched_tweets_filename, hash_tag_list):
         # This handles twitter authentication and the connection to the twitter API
         listener = twitter_listener(fetched_tweets_filename)
-        auth = tweepy.OAuthHandler(credentials.consumer_key, credentials.consumer_secret)
-        auth.set_access_token(credentials.access_token_key, credentials.access_token_secret)
-        stream = tweepy.Stream(auth, listener)
+        auth = self.twitter_authenticator.authenticate_twitter_app
+        stream = Stream(auth, listener)
 
         stream.filter(track=hash_tag_list)
 
 
-class twitter_listener(tweepy.StreamListener):
+class twitter_listener(StreamListener):
     '''
     This is a listener class that just prints received tweets
     '''
