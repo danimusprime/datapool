@@ -22,10 +22,9 @@ class twitter_streamer():
 
     def stream_tweets(self, fetched_tweets_filename, hash_tag_list):
         # This handles twitter authentication and the connection to the twitter API
-        listener = twitter_listener()
+        listener = twitter_listener(fetched_tweets_filename)
         auth = tweepy.OAuthHandler(credentials.consumer_key, credentials.consumer_secret)
         auth.set_access_token(credentials.access_token_key, credentials.access_token_secret)
-
         stream = tweepy.Stream(auth, listener)
 
         stream.filter(track=hash_tag_list)
@@ -56,7 +55,7 @@ class twitter_listener(tweepy.StreamListener):
 if __name__ == "__main__":
 
     hash_tag_list = ['poor people', 'war on the poor', 'socio-economics']
-    fetched_tweets_filename = "tweets.json"
+    fetched_tweets_filename = "tweets.csv"
 
     streamer = twitter_streamer()
     streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
