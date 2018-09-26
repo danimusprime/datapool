@@ -2,28 +2,46 @@ import tweepy
 import psycopg2 as pg2
 import os
 from pprint import pprint
+import credentials
 
 # Tweepy API doc here: http://pythonhosted.org/tweepy/html/api.html
 # psycopg2 API doc here: http://initd.org/psycopg/docs/
 
 # Keys
-DATABASE_URL = os.environ.get('DATABASE_URL')
+# DATABASE_URL = os.environ.get('DATABASE_URL')
 consumer_key = os.environ.get('consumer_key')
 consumer_secret = os.environ.get('consumer_secret')
 access_token_key = os.environ.get('access_token_key')
 access_token_secret = os.environ.get('access_token_secret')
-password = os.environ.get('Password')
-user = os.environ.get('User')
-dbname = os.environ.get('Database')
-
-# Twitter initialization
-auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-auth.set_access_token(access_token_key, access_token_secret)
-api = tweepy.API(auth)
-
-# Postgresql initialization, connection, CRUD
+# password = os.environ.get('Password')
+# user = os.environ.get('User')
+# dbname = os.environ.get('Database')
 
 
+class tweepy_connection(tweepy.StreamListener):
+
+    def on_data(self, data):
+        print(data)
+        return True
+
+    def on_error(self, status):
+        print(status)
+
+
+if __name__ == "__main__":
+
+    listener = tweepy_connection()
+    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+    auth.set_access_token(access_token_key, access_token_secret)
+
+    stream = tweepy.Stream(auth, listener)
+
+    stream.filter(track=['poor people', 'war on the poor', 'socio-economics'])
+
+    # api = tweepy.API(auth)
+
+
+'''
 class Database_connection:
     def __init__(self):
         try:
@@ -45,7 +63,7 @@ class Database_connection:
         self.cursor.execute(create_table_command)
 
     def insert_new_record(self):
-        new_record = ()
+        new_record = on_data
         insert_command = "INSERT INTO tweets(id, tweet_id, text, screen_name, author_id, created_at, inserted_at) VALUES ('" + \
             new_record[0]+"','" + new_record[1] + "')"
         pprint(insert_command)
@@ -81,7 +99,6 @@ finally:
     conn.close()
 
 
-'''
 Old data
 # host= 'ec2-54-227-241-179.compute-1.amazonaws.com',
 # dbname= 'dbname',
