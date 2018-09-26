@@ -69,7 +69,7 @@ class twitter_listener(StreamListener):
 if __name__ == "__main__":
 
     hash_tag_list = ['poor people', 'war on the poor', 'socio-economics']
-    fetched_tweets_filename = "tweets.csv"
+    fetched_tweets_filename = "tweets.txt"
 
     streamer = twitter_streamer()
     streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
