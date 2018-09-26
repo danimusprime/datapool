@@ -38,7 +38,7 @@ class twitter_streamer():
     def stream_tweets(self, fetched_tweets_filename, hash_tag_list):
         # This handles twitter authentication and the connection to the twitter API
         listener = twitter_listener(fetched_tweets_filename)
-        auth = self.twitter_authenticator.authenticate_twitter_app
+        auth = self.twitter_authenticator.authenticate_twitter_app()
         stream = Stream(auth, listener)
 
         stream.filter(track=hash_tag_list)
