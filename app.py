@@ -4,24 +4,49 @@ import os
 from pprint import pprint
 import credentials
 
-# Tweepy API doc here: http://pythonhosted.org/tweepy/html/api.html
-# psycopg2 API doc here: http://initd.org/psycopg/docs/
 
 # Keys
 # DATABASE_URL = os.environ.get('DATABASE_URL')
-consumer_key = os.environ.get('consumer_key')
-consumer_secret = os.environ.get('consumer_secret')
-access_token_key = os.environ.get('access_token_key')
-access_token_secret = os.environ.get('access_token_secret')
+# consumer_key = os.environ.get('consumer_key')
+# consumer_secret = os.environ.get('consumer_secret')
+# access_token_key = os.environ.get('access_token_key')
+# access_token_secret = os.environ.get('access_token_secret')
 # password = os.environ.get('Password')
 # user = os.environ.get('User')
 # dbname = os.environ.get('Database')
 
+class twitter_streamer():
+    '''
+    class for streaming and processing live tweets
+    '''
 
-class tweepy_connection(tweepy.StreamListener):
+    def stream_tweets(self, fetched_tweets_filename, hash_tag_list):
+        # This handles twitter authentication and the connection to the twitter API
+        listener = twitter_listener()
+        auth = tweepy.OAuthHandler(credentials.consumer_key, credentials.consumer_secret)
+        auth.set_access_token(credentials.access_token_key, credentials.access_token_secret)
+
+        stream = tweepy.Stream(auth, listener)
+
+        stream.filter(track=hash_tag_list)
+
+
+class twitter_listener(tweepy.StreamListener):
+    '''
+    This is a listener class that just prints received tweets
+    '''
+
+    def init(self, fetched_tweets_filename):
+        self.fetched_tweets_filename = fetched_tweets_filename
 
     def on_data(self, data):
-        print(data)
+        try:
+            print(data)
+            with open(self.fetched_tweets_filename, 'a') as tf:
+                tf.write(data)
+            return True
+        except BaseException as e:
+            print("Error on_data: %s" % str(e))
         return True
 
     def on_error(self, status):
@@ -30,15 +55,11 @@ class tweepy_connection(tweepy.StreamListener):
 
 if __name__ == "__main__":
 
-    listener = tweepy_connection()
-    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-    auth.set_access_token(access_token_key, access_token_secret)
+    hash_tag_list = ['poor people', 'war on the poor', 'socio-economics']
+    fetched_tweets_filename = "tweets.json"
 
-    stream = tweepy.Stream(auth, listener)
-
-    stream.filter(track=['poor people', 'war on the poor', 'socio-economics'])
-
-    # api = tweepy.API(auth)
+    streamer = twitter_streamer()
+    streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
 
 
 '''
