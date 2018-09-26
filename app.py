@@ -19,7 +19,20 @@ import credentials
 # user = os.environ.get('User')
 # dbname = os.environ.get('Database')
 
-# this class will authenticate twitter, and
+class TwitterClient():
+    def __init__(self):
+        self.auth = TwitterAuthenticator.authenticate_twitter_app()
+        self.twitter_client = API(self.auth)
+
+    def get_user_timeline_tweets(self, num_tweets):
+        tweets = []
+        for tweet in Cursor(self.twitter_client.user_timeline).items(num_tweets):
+            tweets.append(tweet)
+        return tweets
+
+# this class will authenticate twitter
+
+
 class TwitterAuthenticator():
     def authenticate_twitter_app(self):
         auth = OAuthHandler(credentials.consumer_key, credentials.consumer_secret)
@@ -71,8 +84,11 @@ if __name__ == "__main__":
     hash_tag_list = ['poor people', 'war on the poor', 'socio-economics']
     fetched_tweets_filename = "tweets.txt"
 
-    streamer = twitter_streamer()
-    streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
+    twitter_client = TwitterClient()
+    print(twitter_client.get_user_timeline_tweets(6))
+
+    # streamer = twitter_streamer()
+    # streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
 
 
 '''
