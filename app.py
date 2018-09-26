@@ -21,7 +21,7 @@ import credentials
 
 class TwitterClient():
     def __init__(self):
-        self.auth = TwitterAuthenticator.authenticate_twitter_app()
+        self.auth = TwitterAuthenticator().authenticate_twitter_app()
         self.twitter_client = API(self.auth)
 
     def get_user_timeline_tweets(self, num_tweets):
