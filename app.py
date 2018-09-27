@@ -31,10 +31,16 @@ class TwitterClient():
         for tweet in Cursor(self.twitter_client.user_timeline, id=self.twitter_user).items(num_tweets):
             tweets.append(tweet)
         return tweets
+        '''
+        def get_friend_list(self, num_friends):
+            friend_list = []
+            for friend in Cursor(self.twitter_client.friends).items(num_friends):
+                friend_list.append(tweet)
+            return tweets
+        '''
+
 
 # this class will authenticate twitter
-
-
 class TwitterAuthenticator():
     def authenticate_twitter_app(self):
         auth = OAuthHandler(credentials.consumer_key, credentials.consumer_secret)
@@ -64,7 +70,7 @@ class twitter_listener(StreamListener):
     This is a listener class that just prints received tweets
     '''
 
-    def init(self, fetched_tweets_filename):
+    def __init__(self, fetched_tweets_filename):
         self.fetched_tweets_filename = fetched_tweets_filename
 
     def on_data(self, data):
@@ -81,11 +87,41 @@ class twitter_listener(StreamListener):
         print(status)
 
 
+class Database_connection:
+    def __init__(self):
+        try:
+            conn_string = "host= 'localhost' dbname= 'supplier' user= 'danboser' port= '5432'"
+            # this can be removed once heroku is in use
+            self.conn = pg2.connect(conn_string)
+            self.conn.autocommit = True
+            self.cursor = self.conn.cursor
+        except BaseException:
+            pprint('Cannot connect to database')
+            # --> to be used when Heroku is involved (DATABASE_URL, sslmode='require')
+
+    def create_table(self):
+        create_table_command = "CREATE TABLE tweets(id SERIAL PRIMARY KEY, tweet_id BIGINT NOT NULL, text VARCHAR NOT NULL, screen_name VARCHAR NOT NULL, author_id INTEGER, created_at VARCHAR NOT NULL, inserted_at TIMESTAMP NOT NULL)"
+        self.cursor.execute(create_table_command)
+
+    def insert_new_record(self, twitter_listener):
+        new_record = twitter_listener.on_data()
+        insert_command = "INSERT INTO tweets(id, tweet_id, text, screen_name, author_id, created_at, inserted_at) VALUES ('" + \
+            new_record[0]+"','" + new_record[1] + "')"
+        pprint(insert_command)
+        self.cursor.execute(insert_command)
+        self.cursor.commit()
+
+    def close(self):
+        self.cursor.close()
+        self.conn.close()
+
+
 if __name__ == "__main__":
 
     hash_tag_list = ['poor people', 'war on the poor', 'socio-economics']
     fetched_tweets_filename = "tweets.txt"
 
+    insert_new_record = insert_new_record()
     twitter_client = TwitterClient('Batenkaitos')
     print(twitter_client.get_user_timeline_tweets(6))
 
@@ -94,32 +130,6 @@ if __name__ == "__main__":
 
 
 '''
-class Database_connection:
-    def __init__(self):
-        try:
-            self.conn = pg2.connect(DATABASE_URL, sslmode='require')
-            self.conn.autocommit = True
-            self.cursor = self.conn.cursor
-        except:
-            pprint('Cannot connect to database')
-
-    def create_table(self):
-        create_table_command = 'CREATE TABLE tweets(
-            id SERIAL PRIMARY KEY,
-            tweet_id BIGINT NOT NULL,
-            text VARCHAR NOT NULL,
-            screen_name VARCHAR NOT NULL,
-            author_id INTEGER,
-            created_at VARCHAR NOT NULL,
-            inserted_at TIMESTAMP NOT NULL)'
-        self.cursor.execute(create_table_command)
-
-    def insert_new_record(self):
-        new_record = on_data
-        insert_command = "INSERT INTO tweets(id, tweet_id, text, screen_name, author_id, created_at, inserted_at) VALUES ('" + \
-            new_record[0]+"','" + new_record[1] + "')"
-        pprint(insert_command)
-        self.curor.execute(insert_command)
 
     def query_all(self):
         self.cursor.execute('SELECT * FROM tweets')
@@ -146,10 +156,6 @@ except tweepy.error.TweepError:
     print('Whoops, could not fetch news!')
 except UnicodeEncodeError:
     pass
-finally:
-    cursor.close()
-    conn.close()
-
 
 Old data
 # host= 'ec2-54-227-241-179.compute-1.amazonaws.com',
