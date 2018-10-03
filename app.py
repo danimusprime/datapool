@@ -6,6 +6,7 @@ from tweepy import Cursor
 import psycopg2 as pg2
 import os
 from pprint import pprint
+import json
 import credentials
 
 
