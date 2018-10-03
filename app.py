@@ -87,29 +87,33 @@ class twitter_listener(StreamListener):
         print(status)
 
 
-class Database_connection:
+class DatabaseConnection:
     def __init__(self):
         try:
-            conn_string = "host= 'localhost' dbname= 'supplier' user= 'danboser' port= '5432'"
+            conn_string = "host='localhost' dbname='suppliers' user='danboser' port='5432'"
             # this can be removed once heroku is in use
             self.conn = pg2.connect(conn_string)
             self.conn.autocommit = True
-            self.cursor = self.conn.cursor
+            self.cursor = self.conn.cursor()
+            pprint('Connected!!!')
         except BaseException:
             pprint('Cannot connect to database')
             # --> to be used when Heroku is involved (DATABASE_URL, sslmode='require')
 
     def create_table(self):
-        create_table_command = "CREATE TABLE tweets(id SERIAL PRIMARY KEY, tweet_id BIGINT NOT NULL, text VARCHAR NOT NULL, screen_name VARCHAR NOT NULL, author_id INTEGER, created_at VARCHAR NOT NULL, inserted_at TIMESTAMP NOT NULL)"
+        create_table_command = "CREATE TABLE twitter(id SERIAL PRIMARY KEY, tweet_id BIGINT NOT NULL, text_  VARCHAR NOT NULL, screen_name VARCHAR NOT NULL, author_id INTEGER, created_at VARCHAR NOT NULL, inserted_at TIMESTAMP NOT NULL)"
         self.cursor.execute(create_table_command)
+        pprint('Table Created')
 
-    def insert_new_record(self, twitter_listener):
-        new_record = twitter_listener.on_data()
-        insert_command = "INSERT INTO tweets(id, tweet_id, text, screen_name, author_id, created_at, inserted_at) VALUES ('" + \
-            new_record[0]+"','" + new_record[1] + "')"
-        pprint(insert_command)
-        self.cursor.execute(insert_command)
-        self.cursor.commit()
+    def insert_new_record(self):
+        try:
+            new_record = TwitterClient("Batenkaitos").get_user_timeline_tweets(6)
+            insert_command = 'INSERT INTO twitter(id, tweet_id, text, screen_name, author_id,  created_at, inserted_at) VALUES ( % s, % s, % s, % s, % s, current_timestamp)'
+            self.cursor.execute(insert_command, (tweet_id, screen_name, created_at, text))
+            self.cursor.commit()
+            pprint('Data Inserted.')
+        except BaseException:
+            pprint('Error.')
 
     def close(self):
         self.cursor.close()
@@ -121,46 +125,10 @@ if __name__ == "__main__":
     hash_tag_list = ['poor people', 'war on the poor', 'socio-economics']
     fetched_tweets_filename = "tweets.txt"
 
-    insert_new_record = insert_new_record()
+    database_connection = DatabaseConnection()
+    CreateTable = database_connection.create_table()
+    insert_record = database_connection.insert_new_record()
     twitter_client = TwitterClient('Batenkaitos')
     print(twitter_client.get_user_timeline_tweets(6))
-
     # streamer = twitter_streamer()
     # streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
-
-
-'''
-
-    def query_all(self):
-        self.cursor.execute('SELECT * FROM tweets')
-        tweets = self.cursor.fetchall()
-        for punk in tweets:
-            pprint('Each punk : {0}'.format(punk))
-
-
-class tweepy_connection:
-    lookup(self):
-        statuses = api.statuses_lookup(
-            id_=14903018, include_entities=False, trim_user=False, map_=False)
-    for s in statuses:
-        print(s.id, s.text, s.author.screen_name, s.author.id, s.created_at)
-        # previous try return self._statuses_lookup(list_to_csv(id_=14903018), include_entities
-        # cursor.execute("SELECT id FROM tweets WHERE text = %s;", [s.text])
-        # if cursor.rowcount == 0:
-        cursor.execute("INSERT INTO tweets (tweet_id, text, screen_name, author_id, created_at, inserted_at) VALUES (%s, %s, %s, %s, %s, current_timestamp);",
-                       (s.id, s.text, s.author.screen_name, s.author.id, s.created_at))
-        conn.commit()
-
-
-except tweepy.error.TweepError:
-    print('Whoops, could not fetch news!')
-except UnicodeEncodeError:
-    pass
-
-Old data
-# host= 'ec2-54-227-241-179.compute-1.amazonaws.com',
-# dbname= 'dbname',
-# port= '5432',
-# user= 'user',
-# password= 'password')
-'''
