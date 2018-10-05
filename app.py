@@ -128,10 +128,10 @@ if __name__ == "__main__":
     fetched_tweets_filename = "tweets.json"
 
     database_connection = DatabaseConnection()
-    twitterlistener = twitter_listener(StreamListener).on_data(data)
+    # twitter_listener(StreamListener).on_data(data)
     # CreateTable = database_connection.create_table()
     # insert_record = database_connection.insert_new_record()
-    # twitter_client = TwitterClient('Batenkaitos')
-    # print(twitter_client.get_user_timeline_tweets(6))
-    # streamer = twitter_streamer()
+    twitter_client = TwitterClient('Batenkaitos')
+    print(twitter_client.get_user_timeline_tweets(6))
+    streamer = twitter_streamer()
     # streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
