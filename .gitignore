@@ -9,6 +9,7 @@ __pycache__/
 credentials.py
 .database.ini
 .env
+tweets.json
 
 # Distribution / packaging
 .Python
