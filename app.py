@@ -32,21 +32,22 @@ class TwitterClient():
         for tweet in Cursor(self.twitter_client.user_timeline, id=self.twitter_user).items(num_tweets):
             tweets.append(tweet)
         return tweets
-        '''
-        def get_friend_list(self, num_friends):
-            friend_list = []
-            for friend in Cursor(self.twitter_client.friends).items(num_friends):
-                friend_list.append(tweet)
-            return tweets
-        '''
 
+    def get_friend_list(self, num_friends):
+        friend_list = []
+        for friend in Cursor(self.twitter_client.friends).items(num_friends):
+            friend_list.append(tweet)
+        return friend_list
 
 # this class will authenticate twitter
+
+
 class TwitterAuthenticator():
     def authenticate_twitter_app(self):
         auth = OAuthHandler(credentials.consumer_key, credentials.consumer_secret)
         auth.set_access_token(credentials.access_token_key, credentials.access_token_secret)
         return auth
+        print('Authenticated')
 
 
 class twitter_streamer():
@@ -77,8 +78,8 @@ class twitter_listener(StreamListener):
     def on_data(self, data):
         try:
             print(data)
-            with open(self.fetched_tweets_filename, 'a') as tf:
-                tf.write(data)
+            with open(self.fetched_tweets_filename, 'w') as write_file:
+                json.dump(data, write_file)
             return True
         except BaseException as e:
             print("Error on_data: %s" % str(e))
@@ -96,7 +97,7 @@ class DatabaseConnection:
             self.conn = pg2.connect(conn_string)
             self.conn.autocommit = True
             self.cursor = self.conn.cursor()
-            pprint('Connected!!!')
+            pprint('Database Connected.')
         except BaseException:
             pprint('Cannot connect to database')
             # --> to be used when Heroku is involved (DATABASE_URL, sslmode='require')
@@ -124,12 +125,13 @@ class DatabaseConnection:
 if __name__ == "__main__":
 
     hash_tag_list = ['poor people', 'war on the poor', 'socio-economics']
-    fetched_tweets_filename = "tweets.txt"
+    fetched_tweets_filename = "tweets.json"
 
     database_connection = DatabaseConnection()
-    CreateTable = database_connection.create_table()
-    insert_record = database_connection.insert_new_record()
-    twitter_client = TwitterClient('Batenkaitos')
-    print(twitter_client.get_user_timeline_tweets(6))
+    twitterlistener = twitter_listener(StreamListener).on_data(data)
+    # CreateTable = database_connection.create_table()
+    # insert_record = database_connection.insert_new_record()
+    # twitter_client = TwitterClient('Batenkaitos')
+    # print(twitter_client.get_user_timeline_tweets(6))
     # streamer = twitter_streamer()
     # streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
