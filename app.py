@@ -6,24 +6,26 @@ from tweepy import Cursor
 import psycopg2 as pg2
 import os
 from pprint import pprint
+import json
 import credentials
 
+'''
+DATABASE_URL = os.environ.get('DATABASE_URL')
+consumer_key = os.environ.get('consumer_key')
+consumer_secret = os.environ.get('consumer_secret')
+access_token_key = os.environ.get('access_token_key')
+access_token_secret = os.environ.get('access_token_secret')
+password = os.environ.get('Password')
+user = os.environ.get('User')
+dbname = os.environ.get('Database')
+'''
 
-# Keys
-# DATABASE_URL = os.environ.get('DATABASE_URL')
-# consumer_key = os.environ.get('consumer_key')
-# consumer_secret = os.environ.get('consumer_secret')
-# access_token_key = os.environ.get('access_token_key')
-# access_token_secret = os.environ.get('access_token_secret')
-# password = os.environ.get('Password')
-# user = os.environ.get('User')
-# dbname = os.environ.get('Database')
 
 class TwitterClient():
     def __init__(self, twitter_user=None):
         self.auth = TwitterAuthenticator().authenticate_twitter_app()
-        self.twitter_client = API(self.auth)
-        print('Authenticated.')
+        self.twitter_client = API(self.auth, wait_on_rate_limit=True)
+
         self.twitter_user = twitter_user
 
     def get_user_timeline_tweets(self, num_tweets):
@@ -35,23 +37,23 @@ class TwitterClient():
     def get_friend_list(self, num_friends):
         friend_list = []
         for friend in Cursor(self.twitter_client.friends).items(num_friends):
-            friend_list.append(friend_list)
+            friend_list.append(tweet)
         return friend_list
 
+# this class will authenticate twitter api and set's call options
 
-# this class will authenticate twitter
+
 class TwitterAuthenticator():
     def authenticate_twitter_app(self):
         auth = OAuthHandler(credentials.consumer_key, credentials.consumer_secret)
         auth.set_access_token(credentials.access_token_key, credentials.access_token_secret)
         return auth
-        pprint('Authenticated')
+        print('Authenticated')
+
+# This class will authenticate twitter
 
 
 class twitter_streamer():
-    '''
-    class for streaming and processing live tweets
-    '''
 
     def __init__(self):
         self.twitter_authenticator = TwitterAuthenticator()
@@ -64,27 +66,28 @@ class twitter_streamer():
 
         stream.filter(track=hash_tag_list)
 
+# this class is for streaming and processing live tweets
+
 
 class twitter_listener(StreamListener):
-    '''
-    This is a listener class that just prints received tweets
-    '''
 
     def __init__(self, fetched_tweets_filename):
         self.fetched_tweets_filename = fetched_tweets_filename
 
-    def on_error(self, status):
-        print(status)
-
     def on_data(self, data):
         try:
-            print(data)
+            # print(data)
             with open(self.fetched_tweets_filename, 'a') as tf:
                 tf.write(data)
             return True
         except BaseException as e:
             print("Error on_data: %s" % str(e))
         return True
+
+    def on_error(self, status):
+        print(status)
+
+# This is a listener class that just prints received tweets
 
 
 class DatabaseConnection:
@@ -101,15 +104,15 @@ class DatabaseConnection:
             # --> to be used when Heroku is involved (DATABASE_URL, sslmode='require')
 
     def create_table(self):
-        create_table_command = "CREATE TABLE twitter(id SERIAL PRIMARY KEY, tweet_id BIGINT NOT NULL, screen_name VARCHAR NOT NULL, text_  VARCHAR NOT NULL, full_text VARCHAR NOT NULL, favorite_count INTEGER, quote_count INTEGER, reply_count INTEGER, retweet_count INTEGER, location VARCHAR NULL, url VARCHAR NULL, description VARCHAR NULL, source VARCHAR NOT NULL, author_id INTEGER, created_at VARCHAR NOT NULL, inserted_at TIMESTAMP NOT NULL)"
+        create_table_command = "CREATE TABLE twitter(id SERIAL PRIMARY KEY, tweet_id BIGINT NOT NULL, text_  VARCHAR NOT NULL, screen_name VARCHAR NOT NULL, author_id INTEGER, created_at VARCHAR NOT NULL, inserted_at TIMESTAMP NOT NULL)"
         self.cursor.execute(create_table_command)
         pprint('Table Created')
 
-    def insert_new_record(id, self, created_at, text, screen_name, tweet_id, full_text, favorite_count, retweet_count, reply_count, quote_count, location, url, description, source, inserted_at):
+    def insert_new_record(self):
         try:
-            insert_command = 'INSERT INTO twitter(id, text, screen_name, tweet_id, full_text, favorite_count, retweet_count, reply_count, quote_count, location, url, description, source, created_at, inserted_at) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, current_timestamp)'
-            self.cursor.execute(insert_command, (id, text, screen_name, tweet_id, full_text, favorite_count, retweet_count,
-                                                 reply_count, quote_count, location, url, description, source, created_at, inserted_at))
+            new_record = TwitterClient("Batenkaitos").get_user_timeline_tweets(6)
+            insert_command = 'INSERT INTO twitter(id, tweet_id, text, screen_name, author_id,  created_at, inserted_at) VALUES ( % s, % s, % s, % s, % s, current_timestamp)'
+            self.cursor.execute(insert_command, (tweet_id, screen_name, created_at, text))
             self.cursor.commit()
             pprint('Data Inserted.')
         except BaseException:
@@ -126,26 +129,10 @@ if __name__ == "__main__":
     fetched_tweets_filename = "tweets.json"
 
     database_connection = DatabaseConnection()
+    # twitter_listener(StreamListener).on_data()
     # CreateTable = database_connection.create_table()
-    insert_record = database_connection.insert_new_record()
+    # insert_record = database_connection.insert_new_record()
     # twitter_client = TwitterClient('Batenkaitos')
-    # print(twitter_client.get_user_timeline_tweets(6))
-    streamer = twitter_streamer().stream_tweets(fetched_tweets_filename, hash_tag_list)
-    # streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
-
-'''
-    tweet_id = datajson['id']
-    screen_name = datajson['user']['screen_name']
-    text = datajson['text']
-    full_text = datajson['user']['extended_tweet']['full_text']
-    favorite_count = datajson['user']['extended_tweet']['entities']['favorite_count']
-    quote_count = datajson['user']['extended_tweet']['entities']['quote_count']
-    reply_count = datajson['user']['extended_tweet']['entities']['reply_count']
-    retweet_count = datajson['user']['extended_tweet']['entities']['retweet_count']
-    location = datajson['user']['location']
-    url = datajson['user']['url']
-    description = datajson['user']['description']
-    source = datajson['source']
-    created_at = datajson['created_at']
-    inserted_at = TIMESTAMP(datajson['inserted_at'])
-'''
+    # twitterClient = twitter_client.get_user_timeline_tweets(6)
+    streamer = twitter_streamer()
+    streamer_fun = streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
