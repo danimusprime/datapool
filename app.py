@@ -75,7 +75,7 @@ class twitter_listener(StreamListener):
 
     def on_data(self, data):
         try:
-            # print(data)
+            print(data)
             with open(self.fetched_tweets_filename, 'a') as tf:
                 tf.write(data)
             return True
@@ -101,23 +101,13 @@ class DatabaseConnection:
             # --> to be used when Heroku is involved (DATABASE_URL, sslmode='require')
 
     def create_table(self):
-        create_table_command = "CREATE TABLE twitter(
-            id SERIAL PRIMARY KEY,
-            tweet_id BIGINT NOT NULL,
-            text_  VARCHAR NOT NULL,
-            screen_name VARCHAR NOT NULL,
-            source VARCHAR NOT NULL,
-            author_id INTEGER,
-            created_at VARCHAR NOT NULL,
-            inserted_at TIMESTAMP NOT NULL)"
+        create_table_command = "CREATE TABLE twitter(id SERIAL PRIMARY KEY, tweet_id BIGINT NOT NULL, text_  VARCHAR NOT NULL, screen_name VARCHAR NOT NULL, source VARCHAR NOT NULL, author_id INTEGER, created_at VARCHAR NOT NULL, inserted_at TIMESTAMP NOT NULL)"
         self.cursor.execute(create_table_command)
-        pprint('Table Created')
+        pprint('Tables Created')
 
     def insert_new_record(self):
         try:
-            with tweets.json(doc) as (values('[
-
-            ]'))
+            # with tweets.json(doc) as (values('[]'))
             insert_command = 'INSERT INTO twitter(id, tweet_id, text, screen_name, author_id,  created_at, inserted_at) VALUES ( % s, % s, % s, % s, % s, current_timestamp)'
             self.cursor.execute(insert_command, (tweet_id, screen_name, created_at, text))
             self.cursor.commit()
@@ -136,9 +126,9 @@ if __name__ == "__main__":
     fetched_tweets_filename = "tweets.json"
 
     database_connection = DatabaseConnection()
-    # CreateTable = database_connection.create_table()
-    insert_record = database_connection.insert_new_record()
-    # twitter_client = TwitterClient('Batenkaitos')
-    # print(twitter_client.get_user_timeline_tweets(6))
-    streamer = twitter_streamer().stream_tweets(fetched_tweets_filename, hash_tag_list)
+    CreateTable = database_connection.create_table()
+    # insert_record = database_connection.insert_new_record()
+    twitter_client = TwitterClient('Batenkaitos')
+    print(twitter_client.get_user_timeline_tweets(6))
+    # streamer = twitter_streamer().stream_tweets(fetched_tweets_filename, hash_tag_list)
     # streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
