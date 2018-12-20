@@ -79,20 +79,7 @@ class twitter_listener(StreamListener):
     def on_data(self, data):
         try:
             with open(self.fetched_tweets_filename, 'a') as tf:
-                tf.write(json.dumps({
-                    'tweet_id': data['user']['id'],
-                    'screen_name': data['user']['screen_name'],
-                    'text': data['text'],
-                    'full_text': data['user']['extended_tweet']['full_text'],
-                    'favorite_count': data['user']['extended_tweet']['entities']['favorite_count'],
-                    'quote_count': data['user']['extended_tweet']['entities']['quote_count'],
-                    'reply_count': data['user']['extended_tweet']['entities']['reply_count'],
-                    'retweet_count': data['user']['extended_tweet']['entities']['retweet_count'],
-                    'location': data['user']['location'],
-                    'url': data['user']['url'],
-                    'description': data['user']['description'],
-                    'source': data['source'],
-                    'created_at': data['created_at']}) + "\n")
+                tf.write(data)
                 print(type(data))  # --> string
             return True
         except BaseException as e:
@@ -130,7 +117,7 @@ class DatabaseConnection:
             # --> to be used when Heroku is involved (DATABASE_URL, sslmode='require')
 
     def create_table(self):
-        create_table_command = "CREATE TABLE twitter(id SERIAL PRIMARY KEY, tweet_id BIGINT NOT NULL, screen_name VARCHAR NOT NULL, text_  VARCHAR NOT NULL, full_text VARCHAR NOT NULL, favorite_count INTEGER, quote_count INTEGER, reply_count INTEGER, retweet_count INTEGER, location VARCHAR NULL, url VARCHAR NULL, description VARCHAR NULL, source VARCHAR NOT NULL, author_id INTEGER, created_at VARCHAR NOT NULL, inserted_at TIMESTAMP NOT NULL)"
+        create_table_command = "CREATE TABLE twitter2(id SERIAL PRIMARY KEY, ingested_at timestamp DEFAULT CURRENT_TIMESTAMP, data jsonb NOT NULL"
         self.cursor.execute(create_table_command)
         pprint('Table Created')
 
@@ -152,14 +139,14 @@ class DatabaseConnection:
 
 
 def close(self):
-        self.cursor.close()
-        self.conn.close()
+    self.cursor.close()
+    self.conn.close()
 
 
 if __name__ == "__main__":
 
     hash_tag_list = ['poor people', 'war on the poor', 'socio-economics']
-    fetched_tweets_filename = "test_data.json"
+    fetched_tweets_filename = "tweets.json"
 
     # database_connection = DatabaseConnection()
     # twitter_listener(StreamListener).on_data()
