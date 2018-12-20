@@ -148,7 +148,7 @@ if __name__ == "__main__":
     hash_tag_list = ['poor people', 'war on the poor', 'socio-economics']
     fetched_tweets_filename = "tweets.json"
 
-    # database_connection = DatabaseConnection()
+    database_connection = DatabaseConnection()
     # twitter_listener(StreamListener).on_data()
     CreateTable = database_connection.create_table()
     # insert_record = database_connection.insert_new_record()
