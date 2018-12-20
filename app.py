@@ -88,7 +88,6 @@ class twitter_listener(StreamListener):
 
     def data_insert(self, data):
         try:
-            data = []
             with open(self.fetched_tweets_filename) as tf:
                 tf.read(data)
                 for line in tf:
