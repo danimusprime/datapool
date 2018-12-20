@@ -89,9 +89,6 @@ class twitter_listener(StreamListener):
 
 class db_insert():
 
-    def __init__(self, fetched_tweets_filename):
-        self.fetched_tweets_filename = fetched_tweets_filename
-
     def data_insert(self, data):
         try:
             with open(self.fetched_tweets_filename) as tf:
