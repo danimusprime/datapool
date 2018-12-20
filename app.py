@@ -89,12 +89,10 @@ class twitter_listener(StreamListener):
 
 class db_insert():
 
-    def data_insert(self, data):
-        try:
-            with open(self.fetched_tweets_filename) as tf:
+            with open(fetched_tweets_filename) as tf:
                 tf.read(data)
                 for line in tf:
-                    data.append(json.load(line))
+                    data.append(json.loads(line))
             fields = [
                 'user.id',
                 'user.screen_name',
