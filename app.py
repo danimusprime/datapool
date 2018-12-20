@@ -79,11 +79,24 @@ class twitter_listener(StreamListener):
         try:
             with open(self.fetched_tweets_filename, 'a') as tf:
                 tf.write(data)
-                # data = json.load(tf)
+                print(type(data))  # --> string
             return True
         except BaseException as e:
             print("Error on_data: %s" % str(e))
         return True
+        '''
+    def data_insert(self):
+        try:
+            with open(self.fetched_tweets_filename) as tf:
+                source = tf.read()
+                data = json.loads(source)
+            for item in data['user']:
+
+            return True
+        except BaseException:
+            print(item)
+        return True
+        '''
 
     def on_error(self, status):
         print(status)
@@ -111,7 +124,9 @@ class DatabaseConnection:
 
     def insert_new_record(self):
         try:
-            new_record = TwitterClient("Batenkaitos").get_user_timeline_tweets(6)
+            # with open(tweets.json) as f:
+            # new_record = json.load(f)
+            # for item in new_record[]:
             insert_command = 'INSERT INTO twitter(id, text, screen_name, tweet_id, full_text, favorite_count, retweet_count, reply_count, quote_count, location, url, description, source, created_at, inserted_at) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, current_timestamp)'
             self.cursor.execute(insert_command, (id, text, screen_name, tweet_id, full_text, favorite_count,
                                                  retweet_count, reply_count, quote_count, location, url, description, source, created_at, inserted_at))
@@ -130,29 +145,28 @@ if __name__ == "__main__":
     hash_tag_list = ['poor people', 'war on the poor', 'socio-economics']
     fetched_tweets_filename = "tweets.json"
 
-    print(fetched_tweets_filename)
     # database_connection = DatabaseConnection()
     # twitter_listener(StreamListener).on_data()
     # CreateTable = database_connection.create_table()
     # insert_record = database_connection.insert_new_record()
     # twitter_client = TwitterClient('Batenkaitos')
     # twitterClient = twitter_client.get_user_timeline_tweets(6)
-    # streamer = twitter_streamer()
-    # streamer_fun = streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
+    streamer = twitter_streamer()
+    streamer_fun = streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
 
 '''
-    tweet_id = datajson['id']
-    screen_name = datajson['user']['screen_name']
-    text = datajson['text']
-    full_text = datajson['user']['extended_tweet']['full_text']
-    favorite_count = datajson['user']['extended_tweet']['entities']['favorite_count']
-    quote_count = datajson['user']['extended_tweet']['entities']['quote_count']
-    reply_count = datajson['user']['extended_tweet']['entities']['reply_count']
-    retweet_count = datajson['user']['extended_tweet']['entities']['retweet_count']
-    location = datajson['user']['location']
-    url = datajson['user']['url']
-    description = datajson['user']['description']
-    source = datajson['source']
-    created_at = datajson['created_at']
-    inserted_at = TIMESTAMP(datajson['inserted_at'])
+    tweet_id = item['id']
+    screen_name = item['user']['screen_name']
+    text = item['text']
+    full_text = item['user']['extended_tweet']['full_text']
+    favorite_count = item['user']['extended_tweet']['entities']['favorite_count']
+    quote_count = item['user']['extended_tweet']['entities']['quote_count']
+    reply_count = item['user']['extended_tweet']['entities']['reply_count']
+    retweet_count = item['user']['extended_tweet']['entities']['retweet_count']
+    location = item['user']['location']
+    url = item['user']['url']
+    description = item['user']['description']
+    source = item['source']
+    created_at = item['created_at']
+    inserted_at = TIMESTAMP(item['inserted_at']
 '''
