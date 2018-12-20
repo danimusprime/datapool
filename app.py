@@ -8,6 +8,7 @@ import psycopg2 as pg2
 # import os
 from pprint import pprint
 import json
+import datetime
 import credentials
 
 '''
@@ -78,25 +79,36 @@ class twitter_listener(StreamListener):
     def on_data(self, data):
         try:
             with open(self.fetched_tweets_filename, 'a') as tf:
-                tf.write(data)
+                tf.write(json.dumps({
+                    'tweet_id': data['user']['id'],
+                    'screen_name': data['user']['screen_name'],
+                    'text': data['text'],
+                    'full_text': data['user']['extended_tweet']['full_text'],
+                    'favorite_count': data['user']['extended_tweet']['entities']['favorite_count'],
+                    'quote_count': data['user']['extended_tweet']['entities']['quote_count'],
+                    'reply_count': data['user']['extended_tweet']['entities']['reply_count'],
+                    'retweet_count': data['user']['extended_tweet']['entities']['retweet_count'],
+                    'location': data['user']['location'],
+                    'url': data['user']['url'],
+                    'description': data['user']['description'],
+                    'source': data['source'],
+                    'created_at': data['created_at']}) + "\n")
                 print(type(data))  # --> string
             return True
         except BaseException as e:
             print("Error on_data: %s" % str(e))
         return True
-        '''
+
     def data_insert(self):
         try:
             with open(self.fetched_tweets_filename) as tf:
                 source = tf.read()
                 data = json.loads(source)
             for item in data['user']:
-
             return True
         except BaseException:
             print(item)
         return True
-        '''
 
     def on_error(self, status):
         print(status)
@@ -143,7 +155,7 @@ class DatabaseConnection:
 if __name__ == "__main__":
 
     hash_tag_list = ['poor people', 'war on the poor', 'socio-economics']
-    fetched_tweets_filename = "tweets.json"
+    fetched_tweets_filename = "test_data.json"
 
     # database_connection = DatabaseConnection()
     # twitter_listener(StreamListener).on_data()
@@ -155,7 +167,8 @@ if __name__ == "__main__":
     streamer_fun = streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
 
 '''
-    tweet_id = item['id']
+    id = x
+    tweet_id = item['user']['id']
     screen_name = item['user']['screen_name']
     text = item['text']
     full_text = item['user']['extended_tweet']['full_text']
