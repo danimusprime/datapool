@@ -177,7 +177,7 @@ if __name__ == "__main__":
     # twitterClient = twitter_client.get_user_timeline_tweets(6)
     # streamer = twitter_streamer()
     # streamer_fun = streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
-    insert_record = db_insert.data_insert()
+    insert_record = db_insert()
 
 '''
     id = x
