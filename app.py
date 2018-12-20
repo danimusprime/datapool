@@ -89,13 +89,27 @@ class twitter_listener(StreamListener):
     def data_insert(self):
         try:
             with open(self.fetched_tweets_filename) as tf:
-                source = tf.read()
-                data = json.load(source)
-            for item in data['user']:
-                return True
-        except BaseException:
-            print(item)
-        return True
+                for line in tf:
+                    data.append(json.load(line))
+            fields = [
+                'user.id',
+                'user.screen_name',
+                'text',
+                'user.extended_tweet.full_text',
+                'user.extended_tweet.entities.favorite_count',
+                'user.extended_tweet.entities.quote_count',
+                'user.extended_tweet.entities.reply_count',
+                'user.extended_tweet.entities.retweet_count',
+                'user.location',
+                'user.url',
+                'user.description',
+                'source',
+                'created_at',
+            ]
+            for item in data:
+                my_data = [item[field] for field in fields]
+                insert_command = "INSERT INTO twitter(id, text, screen_name, tweet_id, full_text, favorite_count, retweet_count, reply_count, quote_count, location, url, description, source, created_at, inserted_at) VALUES ( % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, current_timestamp)'
+                self.cursor.execute(insert_command, tuple(my_data))
 
     def on_error(self, status):
         print(status)
@@ -117,7 +131,7 @@ class DatabaseConnection:
             # --> to be used when Heroku is involved (DATABASE_URL, sslmode='require')
 
     def create_table(self):
-        create_table_command = "CREATE TABLE twitter2(id SERIAL PRIMARY KEY, ingested_at timestamp DEFAULT CURRENT_TIMESTAMP, data jsonb NOT NULL);"
+        create_table_command = "CREATE TABLE twitter(id SERIAL PRIMARY KEY, ingested_at timestamp DEFAULT CURRENT_TIMESTAMP, tweet_id BIGINT NOT NULL, text_  VARCHAR NOT NULL, screen_name VARCHAR NOT NULL, author_id INTEGER, created_at VARCHAR NOT NULL, inserted_at TIMESTAMP NOT NULL);"
         self.cursor.execute(create_table_command)
         pprint('Table Created')
 
@@ -125,11 +139,11 @@ class DatabaseConnection:
 '''
     def insert_new_record(self):
         try:
-            # with open(tweets.json) as f:
+            with open(tweets.json) as f:
             # new_record = json.load(f)
             # for item in new_record[]:
-            insert_command = 'INSERT INTO twitter(id, text, screen_name, tweet_id, full_text, favorite_count, retweet_count, reply_count, quote_count, location, url, description, source, created_at, inserted_at) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, current_timestamp)'
-            self.cursor.execute(insert_command, (id, text, screen_name, tweet_id, full_text, favorite_count,
+            insert_command = "INSERT INTO twitter(id, text, screen_name, tweet_id, full_text, favorite_count, retweet_count, reply_count, quote_count, location, url, description, source, created_at, inserted_at) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, current_timestamp)'
+            self.cursor.execute(insert_command, tuple(my_data)) (id, text, screen_name, tweet_id, full_text, favorite_count,
                                                  retweet_count, reply_count, quote_count, location, url, description, source, created_at, inserted_at))
             self.cursor.commit()
             pprint('Data Inserted.')
