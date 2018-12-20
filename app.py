@@ -105,7 +105,7 @@ class twitter_listener(StreamListener):
                 source = tf.read()
                 data = json.loads(source)
             for item in data['user']:
-            return True
+                return True
         except BaseException:
             print(item)
         return True
@@ -134,6 +134,8 @@ class DatabaseConnection:
         self.cursor.execute(create_table_command)
         pprint('Table Created')
 
+
+'''
     def insert_new_record(self):
         try:
             # with open(tweets.json) as f:
@@ -146,8 +148,10 @@ class DatabaseConnection:
             pprint('Data Inserted.')
         except BaseException:
             pprint('Error.')
+'''
 
-    def close(self):
+
+def close(self):
         self.cursor.close()
         self.conn.close()
 
