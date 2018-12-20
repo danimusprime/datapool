@@ -90,7 +90,7 @@ class twitter_listener(StreamListener):
         try:
             with open(self.fetched_tweets_filename) as tf:
                 source = tf.read()
-                data = json.loads(source)
+                data = json.load(source)
             for item in data['user']:
                 return True
         except BaseException:
