@@ -113,7 +113,7 @@ class twitter_listener(StreamListener):
                 self.cursor.execute(insert_command, tuple(my_data))
             return True
         except BaseException as e:
-            print("Error on_data: %s" % str(e))
+            print("Error data_insert: %s" % str(e))
         return True
 
 # This is a listener class that just prints received tweets
@@ -166,8 +166,8 @@ if __name__ == "__main__":
 
     database_connection = DatabaseConnection()
     # twitter_listener(StreamListener).on_data()
-    CreateTable = database_connection.create_table()
-    # insert_record = database_connection.insert_new_record()
+    # CreateTable = database_connection.create_table()
+    insert_record = twitter_listener(StreamListener).insert_new_record()
     # twitter_client = TwitterClient('Batenkaitos')
     # twitterClient = twitter_client.get_user_timeline_tweets(6)
     streamer = twitter_streamer()
