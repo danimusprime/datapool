@@ -36,11 +36,11 @@ class TwitterClient():
             tweets.append(tweet)
         return tweets
 
-    def get_friend_list(self, num_friends):
+    '''def get_friend_list(self, num_friends):
         friend_list = []
         for friend in Cursor(self.twitter_client.friends).items(num_friends):
             friend_list.append(tweet)
-        return friend_list
+        return friend_list'''
 
 # this class will authenticate twitter api and set's call options
 
@@ -86,10 +86,11 @@ class twitter_listener(StreamListener):
             print("Error on_data: %s" % str(e))
         return True
 
-    def data_insert(self):
+    def data_insert(self, data):
         try:
             data = []
             with open(self.fetched_tweets_filename) as tf:
+                tf.read(data)
                 for line in tf:
                     data.append(json.load(line))
             fields = [
@@ -167,11 +168,11 @@ if __name__ == "__main__":
     database_connection = DatabaseConnection()
     # twitter_listener(StreamListener).on_data()
     # CreateTable = database_connection.create_table()
-    insert_record = twitter_listener(StreamListener).data_insert()
     # twitter_client = TwitterClient('Batenkaitos')
     # twitterClient = twitter_client.get_user_timeline_tweets(6)
     streamer = twitter_streamer()
     streamer_fun = streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
+    insert_record = twitter_listener(StreamListener).data_insert()
 
 '''
     id = x
