@@ -108,7 +108,7 @@ class twitter_listener(StreamListener):
             ]
             for item in data:
                 my_data = [item[field] for field in fields]
-                insert_command = "INSERT INTO twitter(id, text, screen_name, tweet_id, full_text, favorite_count, retweet_count, reply_count, quote_count, location, url, description, source, created_at, inserted_at) VALUES ( % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, current_timestamp)'
+                insert_command = "INSERT INTO twitter VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
                 self.cursor.execute(insert_command, tuple(my_data))
 
     def on_error(self, status):
