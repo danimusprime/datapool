@@ -88,6 +88,7 @@ class twitter_listener(StreamListener):
 
     def data_insert(self):
         try:
+            data = []
             with open(self.fetched_tweets_filename) as tf:
                 for line in tf:
                     data.append(json.load(line))
@@ -110,9 +111,10 @@ class twitter_listener(StreamListener):
                 my_data = [item[field] for field in fields]
                 insert_command = "INSERT INTO twitter VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
                 self.cursor.execute(insert_command, tuple(my_data))
-
-    def on_error(self, status):
-        print(status)
+            return True
+        except BaseException as e:
+            print("Error on_data: %s" % str(e))
+        return True
 
 # This is a listener class that just prints received tweets
 
