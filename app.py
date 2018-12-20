@@ -150,7 +150,7 @@ if __name__ == "__main__":
 
     # database_connection = DatabaseConnection()
     # twitter_listener(StreamListener).on_data()
-    # CreateTable = database_connection.create_table()
+    CreateTable = database_connection.create_table()
     # insert_record = database_connection.insert_new_record()
     # twitter_client = TwitterClient('Batenkaitos')
     # twitterClient = twitter_client.get_user_timeline_tweets(6)
