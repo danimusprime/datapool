@@ -117,7 +117,7 @@ class DatabaseConnection:
             # --> to be used when Heroku is involved (DATABASE_URL, sslmode='require')
 
     def create_table(self):
-        create_table_command = "CREATE TABLE twitter2(id SERIAL PRIMARY KEY, ingested_at timestamp DEFAULT CURRENT_TIMESTAMP, data jsonb NOT NULL"
+        create_table_command = "CREATE TABLE twitter2(id SERIAL PRIMARY KEY, ingested_at timestamp DEFAULT CURRENT_TIMESTAMP, data jsonb NOT NULL);"
         self.cursor.execute(create_table_command)
         pprint('Table Created')
 
