@@ -86,37 +86,6 @@ class twitter_listener(StreamListener):
             print("Error on_data: %s" % str(e))
         return True
 
-
-class db_insert():
-
-            with open(fetched_tweets_filename) as tf:
-                tf.read(data)
-                for line in tf:
-                    data.append(json.loads(line))
-            fields = [
-                'user.id',
-                'user.screen_name',
-                'text',
-                'user.extended_tweet.full_text',
-                'user.extended_tweet.entities.favorite_count',
-                'user.extended_tweet.entities.quote_count',
-                'user.extended_tweet.entities.reply_count',
-                'user.extended_tweet.entities.retweet_count',
-                'user.location',
-                'user.url',
-                'user.description',
-                'source',
-                'created_at',
-            ]
-            for item in data:
-                my_data = [item[field] for field in fields]
-                insert_command = "INSERT INTO twitter VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-                self.cursor.execute(insert_command, tuple(my_data))
-            return True
-        except BaseException as e:
-            print("Error data_insert: %s" % str(e))
-        return True
-
 # This is a listener class that just prints received tweets
 
 
@@ -138,26 +107,39 @@ class DatabaseConnection:
         self.cursor.execute(create_table_command)
         pprint('Table Created')
 
-
-'''
-    def insert_new_record(self):
+    '''def insert_new_record(self):
         try:
             with open(tweets.json) as f:
             # new_record = json.load(f)
             # for item in new_record[]:
-            insert_command = "INSERT INTO twitter(id, text, screen_name, tweet_id, full_text, favorite_count, retweet_count, reply_count, quote_count, location, url, description, source, created_at, inserted_at) VALUES ( %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, current_timestamp)'
-            self.cursor.execute(insert_command, tuple(my_data)) (id, text, screen_name, tweet_id, full_text, favorite_count,
-                                                 retweet_count, reply_count, quote_count, location, url, description, source, created_at, inserted_at))
+            insert_command = "INSERT INTO twitter VALUES ( % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s,)'
+            self.cursor.execute(insert_command, tuple(my_data))
             self.cursor.commit()
             pprint('Data Inserted.')
         except BaseException:
             pprint('Error.')
-'''
+    fields = [
+        tweet_id:'user.id',
+        'user.screen_name',
+        'text',
+        'user.extended_tweet.full_text',
+        'user.extended_tweet.entities.favorite_count',
+        'user.extended_tweet.entities.quote_count',
+        'user.extended_tweet.entities.reply_count',
+        'user.extended_tweet.entities.retweet_count',
+        'user.location',
+        'user.url',
+        'user.description',
+        'source',
+        'created_at',
+    ]
+    for item in data:
+        my_data = [item[field] for field in fields]
+        self.cursor.execute(insert_command, tuple(my_data))'''
 
-
-def close(self):
-    self.cursor.close()
-    self.conn.close()
+    def close(self):
+        self.cursor.close()
+        self.conn.close()
 
 
 if __name__ == "__main__":
@@ -172,7 +154,6 @@ if __name__ == "__main__":
     # twitterClient = twitter_client.get_user_timeline_tweets(6)
     # streamer = twitter_streamer()
     # streamer_fun = streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
-    insert_record = db_insert()
 
 '''
     id = x
