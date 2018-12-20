@@ -86,6 +86,12 @@ class twitter_listener(StreamListener):
             print("Error on_data: %s" % str(e))
         return True
 
+
+class db_insert():
+
+    def __init__(self, fetched_tweets_filename):
+        self.fetched_tweets_filename = fetched_tweets_filename
+
     def data_insert(self, data):
         try:
             with open(self.fetched_tweets_filename) as tf:
@@ -171,7 +177,7 @@ if __name__ == "__main__":
     # twitterClient = twitter_client.get_user_timeline_tweets(6)
     # streamer = twitter_streamer()
     # streamer_fun = streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
-    insert_record = twitter_listener(StreamListener).data_insert()
+    insert_record = db_insert.data_insert()
 
 '''
     id = x
