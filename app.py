@@ -4,12 +4,12 @@ from tweepy import Stream
 from tweepy import OAuthHandler
 from tweepy import Cursor
 # import dataset
-import pandas as pd
+# import pandas as pd
 import psycopg2 as pg2
 # import os
 from pprint import pprint
 import json
-import datetime
+# import datetime
 import credentials
 
 '''
@@ -80,7 +80,7 @@ class twitter_listener(StreamListener):
     def on_data(self, data):
         try:
             with open(self.fetched_tweets_filename, 'a') as tf:
-                json.dumps(data, tf)
+                tf.write(data)
                 print(type(data))  # --> string
             return True
         except BaseException as e:
@@ -116,7 +116,7 @@ class DatabaseConnection:
                 # my_data = [item[field] for field in fields]
                 for i in data:
                     insert_command = "INSERT INTO twitter VALUES(% s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s,)"
-            self.cursor.execute(insert_command, tuple(my_data))
+            self.cursor.execute(insert_command, tuple(data))
             self.cursor.commit()
             pprint('Data Inserted.')
         except BaseException:
