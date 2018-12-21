@@ -114,7 +114,7 @@ class DatabaseConnection:
                 data = json.load(r)
                 # r.write(data)
                 for item in data:
-                    insert_command = "INSERT INTO twitter VALUES(% s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s,)'
+                    insert_command = "INSERT INTO twitter VALUES(% s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s,)"
             self.cursor.execute(insert_command, tuple(my_data))
             self.cursor.commit()
             pprint('Data Inserted.')
@@ -147,7 +147,7 @@ class DatabaseConnection:
 if __name__ == "__main__":
 
     hash_tag_list = ['poor people', 'war on the poor', 'socio-economics']
-    fetched_tweets_filename = "tweets2.json"
+    fetched_tweets_filename = "tweets.json"
 
     database_connection = DatabaseConnection()
     insert = database_connection.insert_new_record()
