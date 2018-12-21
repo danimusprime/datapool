@@ -4,6 +4,7 @@ from tweepy import Stream
 from tweepy import OAuthHandler
 from tweepy import Cursor
 # import dataset
+import pandas as pd
 import psycopg2 as pg2
 # import os
 from pprint import pprint
@@ -79,7 +80,7 @@ class twitter_listener(StreamListener):
     def on_data(self, data):
         try:
             with open(self.fetched_tweets_filename, 'a') as tf:
-                tf.write(data)
+                json.dumps(data, tf)
                 print(type(data))  # --> string
             return True
         except BaseException as e:
@@ -146,7 +147,7 @@ class DatabaseConnection:
 if __name__ == "__main__":
 
     hash_tag_list = ['poor people', 'war on the poor', 'socio-economics']
-    fetched_tweets_filename = "tweets.json"
+    fetched_tweets_filename = "tweets2.json"
 
     database_connection = DatabaseConnection()
     insert = database_connection.insert_new_record()
@@ -154,8 +155,8 @@ if __name__ == "__main__":
     # CreateTable = database_connection.create_table()
     # twitter_client = TwitterClient('Batenkaitos')
     # twitterClient = twitter_client.get_user_timeline_tweets(6)
-    # streamer = twitter_streamer()
-    # streamer_fun = streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
+    streamer = twitter_streamer()
+    streamer_fun = streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
 
 '''
     id = x
