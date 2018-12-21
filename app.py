@@ -59,6 +59,7 @@ class twitter_streamer():
 
     def __init__(self):
         self.twitter_authenticator = TwitterAuthenticator()
+        print('authenticated')
 
     def stream_tweets(self, fetched_tweets_filename, hash_tag_list):
         # This handles twitter authentication and the connection to the twitter API
@@ -68,9 +69,8 @@ class twitter_streamer():
 
         stream.filter(track=hash_tag_list)
 
+
 # this class is for streaming and processing live tweets
-
-
 class twitter_listener(StreamListener):
 
     def __init__(self, fetched_tweets_filename):
@@ -107,12 +107,13 @@ class DatabaseConnection:
         self.cursor.execute(create_table_command)
         pprint('Table Created')
 
-    '''def insert_new_record(self):
+    def insert_new_record(self):
         try:
-            with open(tweets.json) as f:
-            # new_record = json.load(f)
-            # for item in new_record[]:
-            insert_command = "INSERT INTO twitter VALUES ( % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s,)'
+            with open(fetched_tweets_filename, "r") as r:
+                data = json.load(r)
+                # r.write(data)
+                for item in data:
+                    insert_command = "INSERT INTO twitter VALUES(% s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s,)'
             self.cursor.execute(insert_command, tuple(my_data))
             self.cursor.commit()
             pprint('Data Inserted.')
@@ -148,6 +149,7 @@ if __name__ == "__main__":
     fetched_tweets_filename = "tweets.json"
 
     database_connection = DatabaseConnection()
+    insert = database_connection.insert_new_record()
     # twitter_listener(StreamListener).on_data()
     # CreateTable = database_connection.create_table()
     # twitter_client = TwitterClient('Batenkaitos')
