@@ -121,7 +121,7 @@ class DatabaseConnection:
         except BaseException:
             pprint('Error.')
     fields = [
-        tweet_id:'user.id',
+        'tweet_id',
         'user.screen_name',
         'text',
         'user.extended_tweet.full_text',
@@ -137,7 +137,7 @@ class DatabaseConnection:
     ]
     for item in data:
         my_data = [item[field] for field in fields]
-        self.cursor.execute(insert_command, tuple(my_data))'''
+        self.cursor.execute(insert_command, tuple(my_data))
 
     def close(self):
         self.cursor.close()
