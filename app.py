@@ -113,14 +113,15 @@ class DatabaseConnection:
             with open(fetched_tweets_filename, "r") as r:
                 data = json.load(r)
                 # r.write(data)
-                for item in data:
+                # my_data = [item[field] for field in fields]
+                for i in data:
                     insert_command = "INSERT INTO twitter VALUES(% s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s,)"
             self.cursor.execute(insert_command, tuple(my_data))
             self.cursor.commit()
             pprint('Data Inserted.')
         except BaseException:
             pprint('Error.')
-    fields = [
+    '''fields = [
         'tweet_id',
         'user.screen_name',
         'text',
@@ -137,7 +138,7 @@ class DatabaseConnection:
     ]
     for item in data:
         my_data = [item[field] for field in fields]
-        self.cursor.execute(insert_command, tuple(my_data))
+        self.cursor.execute(insert_command, tuple(my_data))'''
 
     def close(self):
         self.cursor.close()
