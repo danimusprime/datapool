@@ -68,6 +68,8 @@ class twitter_streamer():
 
 
 # this class is for streaming and processing live tweets
+
+
 class twitter_listener(StreamListener):
 
     def __init__(self, fetched_tweets_filename):
@@ -92,10 +94,27 @@ class data_cleaning():
         self.raw_tweets_filename = raw_tweets_filename
 
         with open(self.raw_tweets_filename, 'r') as f:
-            form = json.load(f, strict=False)
+            data = json.load(f, strict=False)
 
         with open('format.json', 'w') as test:
-            json.dump(form, test, ensure_ascii=False, indent=2)
+            formatted_data = json.dump(data, test, ensure_ascii=False, indent=2)
+
+        for item in formatted_data['tweets']:
+            created_at = item['created_at']
+            tweet_id = item['id']
+            text = item['extended_tweet']['full_text']
+            quotes = item['quote_count']
+            reply_count = item['reply_count']
+            retweet_count = item['retweet_count']
+            user_name = item['user']['name']
+            screen_name = item['user']['screen_name']
+            user_id = item['user']['id']
+            user_loc = item['user']['location']
+            user_desc = item['user']['description']
+            hashtags = item['entities']['hashtags']
+
+
+# This class loads the data in proper JSON format for use to brdige the DICT POSTGRES gap
 
 
 class DatabaseConnection:
@@ -112,48 +131,35 @@ class DatabaseConnection:
             # --> to be used when Heroku is involved (DATABASE_URL, sslmode='require')
 
     def create_table(self):
-        create_table_command = "CREATE TABLE twitter(id SERIAL PRIMARY KEY, ingested_at timestamp DEFAULT CURRENT_TIMESTAMP, tweet_id BIGINT NOT NULL, text_  VARCHAR NOT NULL, screen_name VARCHAR NOT NULL, author_id INTEGER, created_at VARCHAR NOT NULL, inserted_at TIMESTAMP NOT NULL);"
+        create_table_command = "CREATE TABLE twitter(id SERIAL PRIMARY KEY, created_at VARCHAR, tweet_id BIGINT NOT NULL, text  VARCHAR NOT NULL, quotes INT, reply_count INT, retweet_count INT, user_name VARCHAR,  screen_name VARCHAR NOT NULL, user_id INTEGER, user_loc VARCHAR, user_desc VARCHAR, hashtags VARCHAR);"
         self.cursor.execute(create_table_command)
         pprint('Table Created')
 
-
-'''
     def insert_new_record(self):
-        try:
-            with open(fetched_tweets_filename, "r") as r:
-                data = json.load(r, )
-                # r.write(data)
-                # my_data = [item[field] for field in fields]
-                for i in data:
-                    insert_command = "INSERT INTO twitter VALUES(% s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s,)"
-            self.cursor.execute(insert_command, tuple(data))
-            self.cursor.commit()
-            pprint('Data Inserted.')
-        except BaseException:
-            pprint('Error.')
-    fields = [
-        'tweet_id',
-        'user.screen_name',
-        'text',
-        'user.extended_tweet.full_text',
-        'user.extended_tweet.entities.favorite_count',
-        'user.extended_tweet.entities.quote_count',
-        'user.extended_tweet.entities.reply_count',
-        'user.extended_tweet.entities.retweet_count',
-        'user.location',
-        'user.url',
-        'user.description',
-        'source',
-        'created_at',
-    ]
-    for item in data:
-        my_data = [item[field] for field in fields]
-        self.cursor.execute(insert_command, tuple(my_data))'''
+        with open('tweets.json', 'r') as f:
+            data = json.load(f, strict=False)
+            for item in data['tweets']:
+                created_at = item['created_at']
+                tweet_id = item['id']
+                text = item['extended_tweet']['full_text']
+                quotes = item['quote_count']
+                reply_count = item['reply_count']
+                retweet_count = item['retweet_count']
+                user_name = item['user']['name']
+                screen_name = item['user']['screen_name']
+                user_id = item['user']['id']
+                user_loc = item['user']['location']
+                user_desc = item['user']['description']
+                hashtags = item['entities']['hashtags']
+                insert_command = "INSERT INTO twitter (created_at, tweet_id, text, quotes, reply_count, retweet_count, user_name, screen_name, user_id, user_loc, user_desc, hashtags) VALUES (% s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s,)", (
+                    created_at, tweet_id, text, quotes, reply_count, retweet_count, user_name, screen_name, user_id, user_loc, user_desc, hashtags)
+                self.cursor.execute(insert_command, data,)
+                self.cursor.commit()
+                pprint('Data Inserted.')
 
-
-def close(self):
-    self.cursor.close()
-    self.conn.close()
+    def close(self):
+        self.cursor.close()
+        self.conn.close()
 
 
 if __name__ == "__main__":
@@ -161,31 +167,14 @@ if __name__ == "__main__":
     hash_tag_list = ['poor people', 'war on the poor', 'socio-economics']
     fetched_tweets_filename = "tweets.json"
     raw_tweets_filename = 'tweets.json'
+    formated_tweets_filename = 'format.json'
 
     database_connection = DatabaseConnection()
-    # insert = database_connection.insert_new_record()
-    # twitter_listener(StreamListener).on_data()
     # CreateTable = database_connection.create_table()
+    insert = database_connection.insert_new_record()
+    # twitter_listener(StreamListener).on_data()
     # twitter_client = TwitterClient('Batenkaitos')
     # twitterClient = twitter_client.get_user_timeline_tweets(6)
-    clean = data_cleaning(raw_tweets_filename)
+    # clean = data_cleaning(raw_tweets_filename)
     # key streamer = twitter_streamer()
     # key streamer_fun = streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
-
-'''
-    id = x
-    tweet_id = item['user']['id']
-    screen_name = item['user']['screen_name']
-    text = item['text']
-    full_text = item['user']['extended_tweet']['full_text']
-    favorite_count = item['user']['extended_tweet']['entities']['favorite_count']
-    quote_count = item['user']['extended_tweet']['entities']['quote_count']
-    reply_count = item['user']['extended_tweet']['entities']['reply_count']
-    retweet_count = item['user']['extended_tweet']['entities']['retweet_count']
-    location = item['user']['location']
-    url = item['user']['url']
-    description = item['user']['description']
-    source = item['source']
-    created_at = item['created_at']
-    inserted_at = TIMESTAMP(item['inserted_at']
-'''
