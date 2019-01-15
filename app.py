@@ -3,13 +3,9 @@ from tweepy import API
 from tweepy import Stream
 from tweepy import OAuthHandler
 from tweepy import Cursor
-# import dataset
-# import pandas as pd
 import psycopg2 as pg2
-# import os
 from pprint import pprint
 import json
-# import datetime
 import credentials
 
 '''
@@ -108,10 +104,12 @@ class DatabaseConnection:
         self.cursor.execute(create_table_command)
         pprint('Table Created')
 
+
+'''
     def insert_new_record(self):
         try:
             with open(fetched_tweets_filename, "r") as r:
-                data = json.load(r)
+                data = json.load(r, )
                 # r.write(data)
                 # my_data = [item[field] for field in fields]
                 for i in data:
@@ -121,7 +119,7 @@ class DatabaseConnection:
             pprint('Data Inserted.')
         except BaseException:
             pprint('Error.')
-    '''fields = [
+    fields = [
         'tweet_id',
         'user.screen_name',
         'text',
@@ -140,7 +138,8 @@ class DatabaseConnection:
         my_data = [item[field] for field in fields]
         self.cursor.execute(insert_command, tuple(my_data))'''
 
-    def close(self):
+
+def close(self):
         self.cursor.close()
         self.conn.close()
 
@@ -151,13 +150,13 @@ if __name__ == "__main__":
     fetched_tweets_filename = "tweets.json"
 
     database_connection = DatabaseConnection()
-    insert = database_connection.insert_new_record()
+    # insert = database_connection.insert_new_record()
     # twitter_listener(StreamListener).on_data()
     # CreateTable = database_connection.create_table()
     # twitter_client = TwitterClient('Batenkaitos')
     # twitterClient = twitter_client.get_user_timeline_tweets(6)
-    # streamer = twitter_streamer()
-    # streamer_fun = streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
+    streamer = twitter_streamer()
+    streamer_fun = streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
 
 '''
     id = x

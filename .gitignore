@@ -12,6 +12,7 @@ credentials.py
 .database.ini
 .env
 tweets.json
+tweets2.json
 
 # Distribution / packaging
 .Python
