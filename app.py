@@ -136,7 +136,7 @@ class DatabaseConnection:
         pprint('Table Created')
 
     def insert_new_record(self):
-        with open('tweets.json', 'r') as f:
+        with open('format.json', 'r') as f:
             data = json.load(f, strict=False)
             for item in data['tweets']:
                 created_at = item['created_at']
@@ -153,7 +153,7 @@ class DatabaseConnection:
                 hashtags = item['entities']['hashtags']
                 insert_command = "INSERT INTO twitter (created_at, tweet_id, text, quotes, reply_count, retweet_count, user_name, screen_name, user_id, user_loc, user_desc, hashtags) VALUES (% s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s,)", (
                     created_at, tweet_id, text, quotes, reply_count, retweet_count, user_name, screen_name, user_id, user_loc, user_desc, hashtags)
-                self.cursor.execute(insert_command, data,)
+                self.cursor.execute(insert_command, data)
                 self.cursor.commit()
                 pprint('Data Inserted.')
 
