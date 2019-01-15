@@ -13,6 +13,7 @@ credentials.py
 .env
 tweets.json
 tweets2.json
+format.json
 
 # Distribution / packaging
 .Python

@@ -77,13 +77,25 @@ class twitter_listener(StreamListener):
         try:
             with open(self.fetched_tweets_filename, 'a') as tf:
                 tf.write(data)
-                print(type(data))  # --> string
+                print(data)  # --> string
             return True
         except BaseException as e:
             print("Error on_data: %s" % str(e))
         return True
 
 # This is a listener class that just prints received tweets
+
+
+class data_cleaning():
+
+    def __init__(self, raw_tweets_filename):
+        self.raw_tweets_filename = raw_tweets_filename
+
+        with open(self.raw_tweets_filename, 'r') as f:
+            form = json.load(f, strict=False)
+
+        with open('format.json', 'w') as test:
+            json.dump(form, test, ensure_ascii=False, indent=2)
 
 
 class DatabaseConnection:
@@ -140,14 +152,15 @@ class DatabaseConnection:
 
 
 def close(self):
-        self.cursor.close()
-        self.conn.close()
+    self.cursor.close()
+    self.conn.close()
 
 
 if __name__ == "__main__":
 
     hash_tag_list = ['poor people', 'war on the poor', 'socio-economics']
     fetched_tweets_filename = "tweets.json"
+    raw_tweets_filename = 'tweets.json'
 
     database_connection = DatabaseConnection()
     # insert = database_connection.insert_new_record()
@@ -155,8 +168,9 @@ if __name__ == "__main__":
     # CreateTable = database_connection.create_table()
     # twitter_client = TwitterClient('Batenkaitos')
     # twitterClient = twitter_client.get_user_timeline_tweets(6)
-    streamer = twitter_streamer()
-    streamer_fun = streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
+    clean = data_cleaning(raw_tweets_filename)
+    # key streamer = twitter_streamer()
+    # key streamer_fun = streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
 
 '''
     id = x
