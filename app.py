@@ -5,7 +5,7 @@ from tweepy import OAuthHandler
 from tweepy import Cursor
 import psycopg2 as pg2
 from psycopg2.extras import Json
-from pprint import pprint
+from psycopg2.extensions import AsIs
 import json
 import credentials
 
@@ -19,6 +19,25 @@ password = os.environ.get('Password')
 user = os.environ.get('User')
 dbname = os.environ.get('Database')
 '''
+
+User_info = {
+    'USER_name': item['user']['name'],
+    'screen_name': item['user']['screen_name'],
+    'USER_ID': item['user']['id'],
+    'USER_loc': item['user']['location'],
+    'USER_desc': item['user']['description'],
+}
+
+Tweet_info = {
+    'USER_ID': json(item['user']['id']),
+    'Created_at': json(item['created_at']),
+    'tweet_id': json(item['id']),
+    'text': json(item['extended_tweet']['full_text']),
+    'quotes': json(item['quote_count']),
+    'reply_count': json(item['reply_count']),
+    'retweet_count': json(item['retweet_count']),
+    'hashtags': json(item['entities']['hashtags']),
+}
 
 
 class TwitterClient():
@@ -89,21 +108,6 @@ class twitter_listener(StreamListener):
 # This is a listener class that just prints received tweets
 
 
-class data_cleaning():
-
-    def __init__(self, raw_tweets_filename):
-        self.raw_tweets_filename = raw_tweets_filename
-
-        with open(self.raw_tweets_filename, 'r') as f:
-            data = json.load(f, strict=False)
-
-        with open('format.json', 'w') as test:
-            formatted_data = json.dump(data, test, ensure_ascii=True, indent=2)
-
-
-# This class loads the data in proper JSON format for use to brdige the DICT POSTGRES gap
-
-
 class DatabaseConnection:
     def __init__(self):
         try:
@@ -113,56 +117,61 @@ class DatabaseConnection:
             self.conn.autocommit = True
             self.cursor = self.conn.cursor()
             self.formatted_tweets_filename = formatted_tweets_filename
-            pprint('Database Connected.')
+            print('Database Connected.')
         except BaseException:
-            pprint('Cannot connect to database')
+            print('Cannot connect to database')
             # --> to be used when Heroku is involved (DATABASE_URL, sslmode='require')
 
-    def insert_new_record(self):
+    def insert_user_record(self):
         try:
-            with open(self.raw_tweets_filename, 'r') as f:
-                data = json.load(f, strict=False)
+            with open(self.formatted_tweets_filename, 'r') as f:
+                user_data = json.loads(instance.get('tweets', {}).get('user', {}))
+                print(type(data))
 
-            with open('format.json', 'w') as test:
-                formatted_data = json.dump(data, test, ensure_ascii=True, indent=2)
+            '''with open('test.json', 'w') as outfile:
+                json.dump(data, outfile, ensure_ascii=True, indent=2)'''
 
-                for item in formatted_data['tweets']:
-                    #created_at = json(item['created_at'])
-                    #tweet_id = json(item['id'])
-                    #text = json(item['extended_tweet']['full_text'])
-                    #quotes = json(item['quote_count'])
-                    #reply_count = json(item['reply_count'])
-                    #retweet_count = json(item['retweet_count'])
-                    USER_name = json(item['user']['name'])
-                    screen_name = json(item['user']['screen_name'])
-                    USER_ID = json(item['user']['id'])
-                    USER_loc = json(item['user']['location'])
-                    USER_desc = json(item['user']['description'])
-                    #hashtags = json(item['entities']['hashtags'])
-                    Result = [USER_name, screen_name, USER_ID, USER_loc, USER_desc]
+            for item in user_data.iteritems():
+                if not instance.get(item):
+                    usr = NULL
+                    if usr:
 
-                    insert_command = "INSERT INTO twituser VALUES (% s, % s, % s, % s, % s,)", (
-                        Result)
+                        # created_at = json(item['created_at'])
+                        # tweet_id = json(item['id'])
+                        # text = json(item['extended_tweet']['full_text'])
+                        # quotes = json(item['quote_count'])
+                        # reply_count = json(item['reply_count'])
+                        # retweet_count = json(item['retweet_count'])
+                USER_name = item['user']['name']
+                screen_name = item['user']['screen_name']
+                USER_ID = item['user']['id']
+                USER_loc = item['user']['location']
+                USER_desc = item['user']['description']
+                # hashtags = json(item['entities']['hashtags'])
+                Result = [USER_name, screen_name, USER_ID, USER_loc, USER_desc]
 
-                    self.cursor.executemany(insert_command, formatted_data)
-                    pprint('Data Inserted.')
-                    self.cursor.commit()
+                insert_command = """INSERT INTO twituser VALUES (% s, % s, % s, % s, % s, % s,)""", (
+                    Result)
+
+                self.cursor.executemany(insert_command, data)
+                print('Data Inserted.')
+                self.cursor.commit()
         except BaseException:
             print('Error')
 
-            #print("error committing data")
+            # print("error committing data")
     def close(self):
         self.cursor.close()
         self.conn.close()
 
 
 if __name__ == "__main__":
-    hash_tag_list = input(
-        "Supply hashtags here. Use quotes, and comma's to delineate:  ")
+    # hash_tag_list = input("Supply hashtags here. Use quotes, and comma's to delineate:  ")
     # ['poor people', 'war on the poor', 'socio-economics']
     fetched_tweets_filename = "tweets.json"
-    raw_tweets_filename = 'tweets.json'
+    raw_tweets_filename = 'tweets2.json'
     formatted_tweets_filename = 'format.json'
+    #twitter_user = input('Supply Twitter User Numeric ID: ')
 
     database_connection = DatabaseConnection()
     # CreateTable = database_connection.create_table()
@@ -170,9 +179,8 @@ if __name__ == "__main__":
     # twitter_listener(StreamListener).on_data()
     # twitter_client = TwitterClient('Batenkaitos')
     # twitterClient = twitter_client.get_user_timeline_tweets(6)
-    # clean = data_cleaning(raw_tweets_filename)
     # streamer=twitter_streamer()
-    #streamer_fun=streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
+    # streamer_fun=streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
 
 
 # (created_at, tweet_id, text, quotes, reply_count, retweet_count, user_name, screen_name, user_id, user_loc, user_desc, hashtags)  left over value list from the insert command, proper order
