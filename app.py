@@ -32,8 +32,9 @@ user_info = {
     'friends_count': None,
     'listed_count': None,
     'favourites_count': None,
-    'statuses_count': None,
+    'statuses_count': None
 }
+
 
 tweet_info = {
     'user_id': None,
@@ -41,7 +42,7 @@ tweet_info = {
     'text': None,
     'source': None,
     'created_at': None,
-    'hashtags': None,
+    'hashtags': None
 }
 
 
@@ -128,45 +129,44 @@ class DatabaseConnection:
             # --> to be used when Heroku is involved (DATABASE_URL, sslmode='require')
 
     def insert_new_record(self):
-        try:
-            with open(self.formatted_tweets_filename) as f:
+        with open(self.formatted_tweets_filename, "r") as f:
+            try:
                 data = json.load(f, strict=True)
 
-            for item in data['tweets']:
-                user_info['user_id'] = item['user']['id']
-                user_info['user_name'] = item['user']['name']
-                user_info['screenname'] = item['user']['screen_name']
-                user_info['user_desc'] = item['user']['description']
-                user_info['user_loc'] = item['user']['location']
-                user_info['user_source'] = item['source']
-                user_info['verified']: item['user']['verified']
-                user_info['followers_count']: item['user']['followers_count']
-                user_info['friends_count']: item['user']['friends_count']
-                user_info['listed_count']: item['user']['listed_count']
-                user_info['favourites_count']: item['user']['favourites_count']
-                user_info['statuses_count']: item['user']['statuses_count']
-                tweet_info['user_id'] = item['user']['id']
-                tweet_info['tweet_id'] = item['id']
-                tweet_info['text'] = item['text']
-                tweet_info['source'] = item['source']
-                tweet_info['created_at'] = item['created_at']
-                tweet_info['hashtags'] = item['entities']['hashtags']
-                Result = user_info
-                print(Result)
+                for item in data['tweets']:
+                    user_info['user_id'] = item['user']['id']
+                    user_info['user_name'] = item['user']['name']
+                    user_info['screenname'] = item['user']['screen_name']
+                    user_info['user_desc'] = item['user']['description']
+                    user_info['user_loc'] = item['user']['location']
+                    user_info['user_source'] = item['source']
+                    user_info['verified'] = item['user']['verified']
+                    user_info['followers_count'] = item['user']['followers_count']
+                    user_info['friends_count'] = item['user']['friends_count']
+                    user_info['listed_count'] = item['user']['listed_count']
+                    user_info['favourites_count'] = item['user']['favourites_count']
+                    user_info['statuses_count'] = item['user']['statuses_count']
+                    tweet_info['user_id'] = item['user']['id']
+                    tweet_info['tweet_id'] = item['id']
+                    tweet_info['text'] = item['text']
+                    tweet_info['source'] = item['source']
+                    tweet_info['created_at'] = item['created_at']
+                    tweet_info['hashtags'] = item['entities']['hashtags']
+                    Result = list(tweet_info)
+                    print(Result)
+                    self.cursor.execute("INSERT INTO tweets VALUES (% s, % s, % s, % s, % s, % s)", (
+                        Result))
+                # self.cursor.commit()
+            except (AttributeError, AssertionError) as Error:
+                print(Error)
+            finally:
+                self.cursor.close()
+                self.conn.close()
+                # print("error committing data")
 
-            # insert_command =
-            # print(type(insert_command))
-            self.cursor.execute("INSERT INTO twituser VALUES (% s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s)", (
-                Result,))
-            print('Data Inserted.')
-            self.cursor.commit()
-        except AssertionError:
-            print('Error')
-
-            # print("error committing data")
-    def close(self):
-        self.cursor.close()
-        self.conn.close()
+        def close(self):
+            self.cursor.close()
+            self.conn.close()
 
 
 if __name__ == "__main__":
