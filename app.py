@@ -20,23 +20,28 @@ user = os.environ.get('User')
 dbname = os.environ.get('Database')
 '''
 
-User_info = {
-    'USER_name': item['user']['name'],
-    'screen_name': item['user']['screen_name'],
-    'USER_ID': item['user']['id'],
-    'USER_loc': item['user']['location'],
-    'USER_desc': item['user']['description'],
+user_info = {
+    'user_id': None,
+    'user_name': None,
+    'screenname': None,
+    'user_loc': None,
+    'user_desc': None,
+    'user_source': None,
+    'verified': None,
+    'followers_count': None,
+    'friends_count': None,
+    'listed_count': None,
+    'favourites_count': None,
+    'statuses_count': None,
 }
 
-Tweet_info = {
-    'USER_ID': json(item['user']['id']),
-    'Created_at': json(item['created_at']),
-    'tweet_id': json(item['id']),
-    'text': json(item['extended_tweet']['full_text']),
-    'quotes': json(item['quote_count']),
-    'reply_count': json(item['reply_count']),
-    'retweet_count': json(item['retweet_count']),
-    'hashtags': json(item['entities']['hashtags']),
+tweet_info = {
+    'user_id': None,
+    'tweet_id': None,
+    'text': None,
+    'source': None,
+    'created_at': None,
+    'hashtags': None,
 }
 
 
@@ -122,41 +127,40 @@ class DatabaseConnection:
             print('Cannot connect to database')
             # --> to be used when Heroku is involved (DATABASE_URL, sslmode='require')
 
-    def insert_user_record(self):
+    def insert_new_record(self):
         try:
-            with open(self.formatted_tweets_filename, 'r') as f:
-                user_data = json.loads(instance.get('tweets', {}).get('user', {}))
-                print(type(data))
+            with open(self.formatted_tweets_filename) as f:
+                data = json.load(f, strict=True)
 
-            '''with open('test.json', 'w') as outfile:
-                json.dump(data, outfile, ensure_ascii=True, indent=2)'''
+            for item in data['tweets']:
+                user_info['user_id'] = item['user']['id']
+                user_info['user_name'] = item['user']['name']
+                user_info['screenname'] = item['user']['screen_name']
+                user_info['user_desc'] = item['user']['description']
+                user_info['user_loc'] = item['user']['location']
+                user_info['user_source'] = item['source']
+                user_info['verified']: item['user']['verified']
+                user_info['followers_count']: item['user']['followers_count']
+                user_info['friends_count']: item['user']['friends_count']
+                user_info['listed_count']: item['user']['listed_count']
+                user_info['favourites_count']: item['user']['favourites_count']
+                user_info['statuses_count']: item['user']['statuses_count']
+                tweet_info['user_id'] = item['user']['id']
+                tweet_info['tweet_id'] = item['id']
+                tweet_info['text'] = item['text']
+                tweet_info['source'] = item['source']
+                tweet_info['created_at'] = item['created_at']
+                tweet_info['hashtags'] = item['entities']['hashtags']
+                Result = [user_info]
+                print(Result)
 
-            for item in user_data.iteritems():
-                if not instance.get(item):
-                    usr = NULL
-                    if usr:
+            insert_command = "INSERT INTO twituser VALUES (% s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s,)", (
+                Result)
 
-                        # created_at = json(item['created_at'])
-                        # tweet_id = json(item['id'])
-                        # text = json(item['extended_tweet']['full_text'])
-                        # quotes = json(item['quote_count'])
-                        # reply_count = json(item['reply_count'])
-                        # retweet_count = json(item['retweet_count'])
-                USER_name = item['user']['name']
-                screen_name = item['user']['screen_name']
-                USER_ID = item['user']['id']
-                USER_loc = item['user']['location']
-                USER_desc = item['user']['description']
-                # hashtags = json(item['entities']['hashtags'])
-                Result = [USER_name, screen_name, USER_ID, USER_loc, USER_desc]
-
-                insert_command = """INSERT INTO twituser VALUES (% s, % s, % s, % s, % s, % s,)""", (
-                    Result)
-
-                self.cursor.executemany(insert_command, data)
-                print('Data Inserted.')
-                self.cursor.commit()
-        except BaseException:
+            self.cursor.execute(insert_command)
+            print('Data Inserted.')
+            self.cursor.commit()
+        except AssertionError:
             print('Error')
 
             # print("error committing data")
