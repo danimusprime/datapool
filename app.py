@@ -151,13 +151,13 @@ class DatabaseConnection:
                 tweet_info['source'] = item['source']
                 tweet_info['created_at'] = item['created_at']
                 tweet_info['hashtags'] = item['entities']['hashtags']
-                Result = [user_info]
+                Result = user_info
                 print(Result)
 
-            insert_command = "INSERT INTO twituser VALUES (% s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s,)", (
-                Result)
-
-            self.cursor.execute(insert_command)
+            # insert_command =
+            # print(type(insert_command))
+            self.cursor.execute("INSERT INTO twituser VALUES (% s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s, % s)", (
+                Result,))
             print('Data Inserted.')
             self.cursor.commit()
         except AssertionError:
@@ -175,7 +175,7 @@ if __name__ == "__main__":
     fetched_tweets_filename = "tweets.json"
     raw_tweets_filename = 'tweets2.json'
     formatted_tweets_filename = 'format.json'
-    #twitter_user = input('Supply Twitter User Numeric ID: ')
+    # twitter_user = input('Supply Twitter User Numeric ID: ')
 
     database_connection = DatabaseConnection()
     # CreateTable = database_connection.create_table()
