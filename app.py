@@ -39,7 +39,7 @@ user_info = {
 tweet_info = {
     'user_id': None,
     'tweet_id': None,
-    'text': None,
+    'text_': None,
     'source': None,
     'created_at': None,
     'hashtags': None
@@ -65,6 +65,11 @@ class TwitterClient():
             friend_list.append(tweet)
         return friend_list'''
 
+    def on_error(self, status_code):
+        if status_code == 420:
+            # returning False in on_data disconnects the stream
+            return False
+
 # this class will authenticate twitter api and set's call options
 
 
@@ -86,12 +91,15 @@ class twitter_streamer():
 
     def stream_tweets(self, fetched_tweets_filename, hash_tag_list):
         # This handles twitter authentication and the connection to the twitter API
-        listener = twitter_listener(fetched_tweets_filename)
         auth = self.twitter_authenticator.authenticate_twitter_app()
+        listener = twitter_listener(fetched_tweets_filename)
         stream = Stream(auth, listener)
-
         stream.filter(track=hash_tag_list)
 
+    def on_error(self, status_code):
+        if status_code == 420:
+            # returning False in on_data disconnects the stream
+            return False
 
 # this class is for streaming and processing live tweets
 
@@ -103,8 +111,8 @@ class twitter_listener(StreamListener):
 
     def on_data(self, data):
         try:
-            with open(self.fetched_tweets_filename, 'a') as tf:
-                tf.write(data)
+            with open(self.fetched_tweets_filename, 'a', encoding='utf-8', errors='ignore') as ex:
+                ex.write(data)
                 print(type(data))  # --> string
             return True
         except BaseException as e:
@@ -132,28 +140,27 @@ class DatabaseConnection:
         with open(self.formatted_tweets_filename, "r") as f:
             try:
                 data = json.load(f, strict=True)
+                return data
+
+                tweet_info = {
+                    'user_id': None,
+                    'tweet_id': None,
+                    'text_': None,
+                    'source': None,
+                    'created_at': None,
+                    'hashtags': None
+                }
 
                 for item in data['tweets']:
-                    user_info['user_id'] = item['user']['id']
-                    user_info['user_name'] = item['user']['name']
-                    user_info['screenname'] = item['user']['screen_name']
-                    user_info['user_desc'] = item['user']['description']
-                    user_info['user_loc'] = item['user']['location']
-                    user_info['user_source'] = item['source']
-                    user_info['verified'] = item['user']['verified']
-                    user_info['followers_count'] = item['user']['followers_count']
-                    user_info['friends_count'] = item['user']['friends_count']
-                    user_info['listed_count'] = item['user']['listed_count']
-                    user_info['favourites_count'] = item['user']['favourites_count']
-                    user_info['statuses_count'] = item['user']['statuses_count']
-                    tweet_info['user_id'] = item['user']['id']
-                    tweet_info['tweet_id'] = item['id']
-                    tweet_info['text'] = item['text']
+                    tweet_info['user_id'] = item['user']['id_str']
+                    tweet_info['tweet_id'] = item['id_str']
+                    tweet_info['text_'] = item['text']
                     tweet_info['source'] = item['source']
                     tweet_info['created_at'] = item['created_at']
                     tweet_info['hashtags'] = item['entities']['hashtags']
                     Result = list(tweet_info)
                     print(Result)
+
                     self.cursor.execute("INSERT INTO tweets VALUES (% s, % s, % s, % s, % s, % s)", (
                         Result))
                 # self.cursor.commit()
@@ -170,12 +177,12 @@ class DatabaseConnection:
 
 
 if __name__ == "__main__":
-    # hash_tag_list = input("Supply hashtags here. Use quotes, and comma's to delineate:  ")
+    hash_tag_list = input("Supply hashtags here. Use quotes, and comma's to delineate:  ")
     # ['poor people', 'war on the poor', 'socio-economics']
     fetched_tweets_filename = "tweets.json"
     raw_tweets_filename = 'tweets2.json'
     formatted_tweets_filename = 'format.json'
-    # twitter_user = input('Supply Twitter User Numeric ID: ')
+    # twitter_user = input('Supply Twitter User Name: ')
 
     database_connection = DatabaseConnection()
     # CreateTable = database_connection.create_table()
@@ -183,8 +190,21 @@ if __name__ == "__main__":
     # twitter_listener(StreamListener).on_data()
     # twitter_client = TwitterClient('Batenkaitos')
     # twitterClient = twitter_client.get_user_timeline_tweets(6)
-    # streamer=twitter_streamer()
-    # streamer_fun=streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
+    # streamer = twitter_streamer()
+    # streamer_fun = streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
 
 
 # (created_at, tweet_id, text, quotes, reply_count, retweet_count, user_name, screen_name, user_id, user_loc, user_desc, hashtags)  left over value list from the insert command, proper order
+
+'''user_info['user_id'] = item['user']['id_str']
+user_info['user_name'] = item['user']['name']
+user_info['screenname'] = item['user']['screen_name']
+user_info['user_desc'] = item['user']['description']
+user_info['user_loc'] = item['user']['location']
+user_info['user_source'] = item['source']
+user_info['verified'] = item['user']['verified']
+user_info['followers_count'] = item['user']['followers_count']
+user_info['friends_count'] = item['user']['friends_count']
+user_info['listed_count'] = item['user']['listed_count']
+user_info['favourites_count'] = item['user']['favourites_count']
+user_info['statuses_count'] = item['user']['statuses_count']'''
