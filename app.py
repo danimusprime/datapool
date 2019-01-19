@@ -50,19 +50,20 @@ class TwitterClient():
     def __init__(self, twitter_user=None):
         self.auth = TwitterAuthenticator().authenticate_twitter_app()
         self.twitter_client = API(self.auth, wait_on_rate_limit=True)
-
         self.twitter_user = twitter_user
 
-    def get_user_timeline_tweets(self, num_tweets):
+    def get_user_timeline_tweets(self, num_tweets=None):
         tweets = []
         for tweet in Cursor(self.twitter_client.user_timeline, id=self.twitter_user).items(num_tweets):
             tweets.append(tweet)
+
         return tweets
 
     '''def get_friend_list(self, num_friends):
         friend_list = []
         for friend in Cursor(self.twitter_client.friends).items(num_friends):
-            friend_list.append(tweet)
+            friend_list.append(friend_list)
+
         return friend_list'''
 
     def on_error(self, status_code):
@@ -137,39 +138,35 @@ class DatabaseConnection:
             # --> to be used when Heroku is involved (DATABASE_URL, sslmode='require')
 
     def insert_new_record(self):
-        with open(self.formatted_tweets_filename, "r") as f:
-            try:
-                data = json.load(f, strict=True)
-                return data
+        data = TwitterClient.get_user_timeline_tweets()
 
-                tweet_info = {
-                    'user_id': None,
-                    'tweet_id': None,
-                    'text_': None,
-                    'source': None,
-                    'created_at': None,
-                    'hashtags': None
-                }
-
-                for item in data['tweets']:
-                    tweet_info['user_id'] = item['user']['id_str']
-                    tweet_info['tweet_id'] = item['id_str']
-                    tweet_info['text_'] = item['text']
-                    tweet_info['source'] = item['source']
-                    tweet_info['created_at'] = item['created_at']
-                    tweet_info['hashtags'] = item['entities']['hashtags']
-                    Result = list(tweet_info)
-                    print(Result)
-
-                    self.cursor.execute("INSERT INTO tweets VALUES (% s, % s, % s, % s, % s, % s)", (
-                        Result))
+        tweet_info = {
+            'user_id': None,
+            'tweet_id': None,
+            'text_': None,
+            'source': None,
+            'created_at': None,
+            'hashtags': None
+        }
+        try:
+            for item in data['_json']:
+                tweet_info['user_id'] = item['user']['id_str']
+                tweet_info['tweet_id'] = item['id_str']
+                tweet_info['text_'] = item['text']
+                tweet_info['source'] = item['source']
+                tweet_info['created_at'] = item['created_at']
+                tweet_info['hashtags'] = item['entities']['hashtags']
+                Result = list(tweet_info)
+                print(Result)
+                self.cursor.execute("INSERT INTO tweets VALUES (% s, % s, % s, % s, % s, % s)", (
+                    Result))
                 # self.cursor.commit()
-            except (AttributeError, AssertionError) as Error:
-                print(Error)
-            finally:
-                self.cursor.close()
-                self.conn.close()
-                # print("error committing data")
+        except (AttributeError, AssertionError) as Error:
+            print(Error)
+        finally:
+            self.cursor.close()
+            self.conn.close()
+            # print("error committing data")
 
         def close(self):
             self.cursor.close()
@@ -177,19 +174,20 @@ class DatabaseConnection:
 
 
 if __name__ == "__main__":
-    hash_tag_list = input("Supply hashtags here. Use quotes, and comma's to delineate:  ")
+    # hash_tag_list = input("Supply hashtags here. Use quotes, and comma's to delineate:  ")
     # ['poor people', 'war on the poor', 'socio-economics']
     fetched_tweets_filename = "tweets.json"
     raw_tweets_filename = 'tweets2.json'
     formatted_tweets_filename = 'format.json'
-    # twitter_user = input('Supply Twitter User Name: ')
+    twitter_user = input('Supply Twitter User Name: ')
+    num_tweets = input('volume of tweets: ')
 
     database_connection = DatabaseConnection()
     # CreateTable = database_connection.create_table()
     insert = database_connection.insert_new_record()
     # twitter_listener(StreamListener).on_data()
-    # twitter_client = TwitterClient('Batenkaitos')
-    # twitterClient = twitter_client.get_user_timeline_tweets(6)
+    TwitterName = TwitterClient(twitter_user)
+    twitter_client = TwitterName.get_user_timeline_tweets()
     # streamer = twitter_streamer()
     # streamer_fun = streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
 
