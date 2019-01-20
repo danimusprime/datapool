@@ -4,8 +4,10 @@ from tweepy import Stream
 from tweepy import OAuthHandler
 from tweepy import Cursor
 import psycopg2 as pg2
+import psycopg2.extras
 from psycopg2.extras import Json
 from psycopg2.extensions import AsIs
+
 import json
 import credentials
 
@@ -47,12 +49,14 @@ tweet_info = {
 
 
 class TwitterClient():
-    def __init__(self, twitter_user=None):
+    def __init__(self, twitter_user):
         self.auth = TwitterAuthenticator().authenticate_twitter_app()
         self.twitter_client = API(self.auth, wait_on_rate_limit=True)
+
         self.twitter_user = twitter_user
 
-    def get_user_timeline_tweets(self, num_tweets=None):
+    def get_user_timeline_tweets(self, num_tweets):
+        self.num_tweets = num_tweets
         tweets = []
         for tweet in Cursor(self.twitter_client.user_timeline, id=self.twitter_user).items(num_tweets):
             tweets.append(tweet)
@@ -130,7 +134,7 @@ class DatabaseConnection:
             # this can be removed once heroku is in use
             self.conn = pg2.connect(conn_string)
             self.conn.autocommit = True
-            self.cursor = self.conn.cursor()
+            self.cursor = self.conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
             self.formatted_tweets_filename = formatted_tweets_filename
             print('Database Connected.')
         except BaseException:
@@ -138,7 +142,8 @@ class DatabaseConnection:
             # --> to be used when Heroku is involved (DATABASE_URL, sslmode='require')
 
     def insert_new_record(self):
-        data = TwitterClient.get_user_timeline_tweets()
+        with open(self.formatted_tweets_filename, 'r', encoding='utf-8') as ft:
+            data = json.load(ft)
 
         tweet_info = {
             'user_id': None,
@@ -149,14 +154,14 @@ class DatabaseConnection:
             'hashtags': None
         }
         try:
-            for item in data['_json']:
-                tweet_info['user_id'] = item['user']['id_str']
+            for item in data['tweets']:
+                tweet_info['uer_id'] = item['user']['id_str']
                 tweet_info['tweet_id'] = item['id_str']
                 tweet_info['text_'] = item['text']
                 tweet_info['source'] = item['source']
                 tweet_info['created_at'] = item['created_at']
                 tweet_info['hashtags'] = item['entities']['hashtags']
-                Result = list(tweet_info)
+                Result = list[(tweet_info)
                 print(Result)
                 self.cursor.execute("INSERT INTO tweets VALUES (% s, % s, % s, % s, % s, % s)", (
                     Result))
@@ -180,14 +185,14 @@ if __name__ == "__main__":
     raw_tweets_filename = 'tweets2.json'
     formatted_tweets_filename = 'format.json'
     twitter_user = input('Supply Twitter User Name: ')
-    num_tweets = input('volume of tweets: ')
+    num_tweets = int(input('integer: '))
 
     database_connection = DatabaseConnection()
     # CreateTable = database_connection.create_table()
     insert = database_connection.insert_new_record()
     # twitter_listener(StreamListener).on_data()
     TwitterName = TwitterClient(twitter_user)
-    twitter_client = TwitterName.get_user_timeline_tweets()
+    twitter_client = TwitterName.get_user_timeline_tweets(num_tweets)
     # streamer = twitter_streamer()
     # streamer_fun = streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
 
