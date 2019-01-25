@@ -5,9 +5,9 @@ from tweepy import OAuthHandler
 from tweepy import Cursor
 import psycopg2 as pg2
 import psycopg2.extras
-from psycopg2.extras import Json
-from psycopg2.extensions import AsIs
-
+# from psycopg2.extras import Json
+# from psycopg2.extensions import AsIs
+# import re
 import json
 import credentials
 
@@ -60,7 +60,7 @@ class TwitterClient():
         tweets = []
         for tweet in Cursor(self.twitter_client.user_timeline, id=self.twitter_user).items(num_tweets):
             tweets.append(tweet)
-
+        print(tweets)
         return tweets
 
     '''def get_friend_list(self, num_friends):
@@ -92,7 +92,7 @@ class twitter_streamer():
 
     def __init__(self):
         self.twitter_authenticator = TwitterAuthenticator()
-        print('authenticated')
+    print('authenticated')
 
     def stream_tweets(self, fetched_tweets_filename, hash_tag_list):
         # This handles twitter authentication and the connection to the twitter API
@@ -127,6 +127,29 @@ class twitter_listener(StreamListener):
 # This is a listener class that just prints received tweets
 
 
+class cleaners:
+    def __init__(self, raw_tweets_filename):
+        self.raw_tweets_filename = raw_tweets_filename
+
+    def loading(self):
+        try:
+            with open(self.raw_tweets_filename, 'r') as f:
+                data = json.loads(f)
+            return data
+            print(data)
+        except BaseException:
+            print("error")
+
+    '''def formatting(self):
+        try:
+            format_data = json.dumps(f, separators=(',', ': '))
+        return data
+
+            print(data)'''
+
+# Functionality for analyzing and categorizing content from tweets.
+
+
 class DatabaseConnection:
     def __init__(self):
         try:
@@ -134,7 +157,7 @@ class DatabaseConnection:
             # this can be removed once heroku is in use
             self.conn = pg2.connect(conn_string)
             self.conn.autocommit = True
-            self.cursor = self.conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+            self.cursor = self.conn.cursor()
             self.formatted_tweets_filename = formatted_tweets_filename
             print('Database Connected.')
         except BaseException:
@@ -142,8 +165,13 @@ class DatabaseConnection:
             # --> to be used when Heroku is involved (DATABASE_URL, sslmode='require')
 
     def insert_new_record(self):
-        with open(self.formatted_tweets_filename, 'r', encoding='utf-8') as ft:
-            data = json.load(ft)
+        # with open(self.formatted_tweets_filename, 'r', encoding='utf-8') as ft:
+            # data = json.load(ft)
+
+        data = cleaners(raw_tweets_filename).loading()
+        change = data[0]
+        status = json.dumps(change._json, separators=(',', ': '))
+        print(data)
 
         tweet_info = {
             'user_id': None,
@@ -154,18 +182,18 @@ class DatabaseConnection:
             'hashtags': None
         }
         try:
-            for item in data['tweets']:
-                tweet_info['uer_id'] = item['user']['id_str']
+            for item in status['_json']:
+                tweet_info['user_id'] = item['user']['id_str']
                 tweet_info['tweet_id'] = item['id_str']
                 tweet_info['text_'] = item['text']
                 tweet_info['source'] = item['source']
                 tweet_info['created_at'] = item['created_at']
                 tweet_info['hashtags'] = item['entities']['hashtags']
-                Result = list[(tweet_info)
-                print(Result)
+                Result = dict(tweet_info)
+                print(type(tweet_info))
                 self.cursor.execute("INSERT INTO tweets VALUES (% s, % s, % s, % s, % s, % s)", (
                     Result))
-                # self.cursor.commit()
+                self.cursor.commit()
         except (AttributeError, AssertionError) as Error:
             print(Error)
         finally:
@@ -173,9 +201,9 @@ class DatabaseConnection:
             self.conn.close()
             # print("error committing data")
 
-        def close(self):
-            self.cursor.close()
-            self.conn.close()
+    def close(self):
+        self.cursor.close()
+        self.conn.close()
 
 
 if __name__ == "__main__":
@@ -187,12 +215,13 @@ if __name__ == "__main__":
     twitter_user = input('Supply Twitter User Name: ')
     num_tweets = int(input('integer: '))
 
+    TwitterName = TwitterClient(twitter_user)
+    twitter_client = TwitterName.get_user_timeline_tweets(num_tweets)
     database_connection = DatabaseConnection()
+    # clean = cleaners(raw_tweets_filename)
     # CreateTable = database_connection.create_table()
     insert = database_connection.insert_new_record()
     # twitter_listener(StreamListener).on_data()
-    TwitterName = TwitterClient(twitter_user)
-    twitter_client = TwitterName.get_user_timeline_tweets(num_tweets)
     # streamer = twitter_streamer()
     # streamer_fun = streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
 
