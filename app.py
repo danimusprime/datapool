@@ -41,7 +41,7 @@ user_info = {
 tweet_info = {
     'user_id': None,
     'tweet_id': None,
-    'text_': None,
+    'text': None,
     'source': None,
     'created_at': None,
     'hashtags': None
@@ -168,24 +168,25 @@ class DatabaseConnection:
         # with open(self.formatted_tweets_filename, 'r', encoding='utf-8') as ft:
             # data = json.load(ft)
 
-        data = cleaners(raw_tweets_filename).loading()
-        change = data[0]
-        status = json.dumps(change._json, separators=(',', ': '))
-        print(data)
+        data = cleaners(fetched_tweets_filename).loading()
+        #change = data[0]
+        #status = json.dumps(change._json, separators=(',', ': ')
+        #print(data)
 
         tweet_info = {
             'user_id': None,
             'tweet_id': None,
-            'text_': None,
+            'text': None,
             'source': None,
             'created_at': None,
             'hashtags': None
         }
+
         try:
-            for item in status['_json']:
+            for item in data['tweets']:
                 tweet_info['user_id'] = item['user']['id_str']
                 tweet_info['tweet_id'] = item['id_str']
-                tweet_info['text_'] = item['text']
+                tweet_info['text'] = item['text']
                 tweet_info['source'] = item['source']
                 tweet_info['created_at'] = item['created_at']
                 tweet_info['hashtags'] = item['entities']['hashtags']
@@ -209,14 +210,14 @@ class DatabaseConnection:
 if __name__ == "__main__":
     # hash_tag_list = input("Supply hashtags here. Use quotes, and comma's to delineate:  ")
     # ['poor people', 'war on the poor', 'socio-economics']
-    fetched_tweets_filename = "tweets.json"
+    fetched_tweets_filename = "testfile.json"
     raw_tweets_filename = 'tweets2.json'
     formatted_tweets_filename = 'format.json'
     twitter_user = input('Supply Twitter User Name: ')
     num_tweets = int(input('integer: '))
 
-    TwitterName = TwitterClient(twitter_user)
-    twitter_client = TwitterName.get_user_timeline_tweets(num_tweets)
+    #TwitterName = TwitterClient(twitter_user)
+    #twitter_client = TwitterName.get_user_timeline_tweets(num_tweets)
     database_connection = DatabaseConnection()
     # clean = cleaners(raw_tweets_filename)
     # CreateTable = database_connection.create_table()
