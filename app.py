@@ -192,7 +192,7 @@ class DatabaseConnection:
                 tweet_info['hashtags'] = item['entities']['hashtags']
                 Result = list(tweet_info)
                 print(type(tweet_info))
-                self.cursor.execute("INSERT INTO tweet_info VALUES (%s, %s, %s, %s, %s, %s)", (
+                self.cursor.execute("INSERT INTO tweet_info VALUES (%s, %s, %s, %s, %s, %s, %s)", (
                     Result))
                 self.cursor.commit()
         except (AttributeError, AssertionError) as Error:
