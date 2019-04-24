@@ -39,12 +39,12 @@ user_info = {
 
 
 tweet_info = {
-    'user_id': None,
     'tweet_id': None,
     'text': None,
     'source': None,
     'created_at': None,
-    'hashtags': None
+    'hashtags': None,
+    'user_id': None
 }
 
 
@@ -127,16 +127,16 @@ class twitter_listener(StreamListener):
 # This is a listener class that just prints received tweets
 
 
-class cleaners:
+class cleaners():
     def __init__(self, raw_tweets_filename):
         self.raw_tweets_filename = raw_tweets_filename
 
     def loading(self):
         try:
             with open(self.raw_tweets_filename, 'r') as f:
-                data = json.loads(f)
+                data = json.load(f)
             return data
-            print(data)
+            #print(data)
         except BaseException:
             print("error")
 
@@ -211,6 +211,7 @@ if __name__ == "__main__":
     # hash_tag_list = input("Supply hashtags here. Use quotes, and comma's to delineate:  ")
     # ['poor people', 'war on the poor', 'socio-economics']
     fetched_tweets_filename = "testfile.json"
+    raw_tweets_filename = 'testfile.json'
     #raw_tweets_filename = 'tweets2.json'
     formatted_tweets_filename = 'testfile.json'
     #twitter_user = input('Supply Twitter User Name: ')
