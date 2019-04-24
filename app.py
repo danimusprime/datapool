@@ -156,7 +156,7 @@ class DatabaseConnection:
             conn_string = "host='localhost' dbname='suppliers' user='danboser' port='5432'"
             # this can be removed once heroku is in use
             self.conn = pg2.connect(conn_string)
-            self.conn.autocommit = True
+            self.conn.autocommit = False
             self.cursor = self.conn.cursor()
             #self.formatted_tweets_filename = formatted_tweets_filename
             print('Database Connected.')
@@ -173,15 +173,6 @@ class DatabaseConnection:
         #status = json.dumps(change._json, separators=(',', ': ')
         #print(data)
 
-        tweet_info = {
-            'user_id': None,
-            'tweet_id': None,
-            'text': None,
-            'source': None,
-            'created_at': None,
-            'hashtags': None
-        }
-
         try:
             for item in data['tweets']:
                 tweet_info['user_id'] = item['user']['id']
@@ -190,19 +181,19 @@ class DatabaseConnection:
                 tweet_info['source'] = item['source']
                 tweet_info['created_at'] = item['created_at']
                 tweet_info['hashtags'] = item['entities']['hashtags']
-                Result = list(tweet_info)
-                print(type(tweet_info))
-                self.cursor.execute("INSERT INTO tweet_info VALUES (%s, %s, %s, %s, %s, %s, %s)", (
-                    Result))
-                self.cursor.commit()
-        except (AttributeError, AssertionError) as Error:
-            print(Error)
-        finally:
-            self.cursor.close()
-            self.conn.close()
-            # print("error committing data")
+                Result = tweet_info
+                print(Result.values())
+                return Result
+        except: EOFError
+
+
+    def malarky(self, Result):
+        self.cursor.execute("INSERT INTO tweet_info VALUES (%s, %s, %s, %s, %s, %s, %s)", (Result.values())
+                            print(Result.values())
+
 
     def close(self):
+        self.conn.commit()
         self.cursor.close()
         self.conn.close()
 
@@ -223,6 +214,7 @@ if __name__ == "__main__":
     # clean = cleaners(raw_tweets_filename)
     # CreateTable = database_connection.create_table()
     insert = database_connection.insert_new_record()
+    memory = database_connection.malarky(Result)
     # twitter_listener(StreamListener).on_data()
     # streamer = twitter_streamer()
     # streamer_fun = streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
