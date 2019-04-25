@@ -234,7 +234,6 @@ if __name__ == "__main__":
     #TwitterName = TwitterClient(twitter_user)
     #twitter_client = TwitterName.get_user_timeline_tweets(num_tweets)
     database_connection = DatabaseConnection()
-<<<<<<< HEAD
     #clean = cleaners.twitter_info()
     # CreateTable = database_connection.create_table()
     load = cleaners.load_tweet_data()
@@ -243,12 +242,3 @@ if __name__ == "__main__":
     # twitter_listener(StreamListener).on_data()
     # streamer = twitter_streamer()
     # streamer_fun = streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
-=======
-    # twitter_listener(StreamListener).on_data(data)
-    # CreateTable = database_connection.create_table()
-    # insert_record = database_connection.insert_new_record()
-    twitter_client = TwitterClient('Batenkaitos')
-    print(twitter_client.get_user_timeline_tweets(6))
-    streamer = twitter_streamer()
-    # streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
->>>>>>> master
