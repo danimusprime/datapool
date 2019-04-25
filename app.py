@@ -39,12 +39,13 @@ user_info = {
 
 
 tweet_info = {
+    'user_id': None,
     'tweet_id': None,
     'text': None,
     'source': None,
     'created_at': None,
-    'hashtags': None,
-    'user_id': None
+    'hashtags': None
+
 }
 
 
@@ -140,6 +141,47 @@ class cleaners():
         except BaseException:
             print("error")
 
+    def load_tweet_data():
+        try:
+            f=open('testfile.json')
+            data = json.load(f)
+            for item in data['tweets']:
+                tweet_info['user_id'] = item['user']['id']
+                tweet_info['tweet_id'] = item['id']
+                tweet_info['text'] = item['text']
+                tweet_info['source'] = item['source']
+                tweet_info['created_at'] = item['created_at']
+                tweet_info['hashtags'] = item['entities']['hashtags']
+                Result = tweet_info
+                print(Result.values())
+        except BaseException:
+            print('error')
+        return list(Result.values())
+
+
+    def load_user_data():
+        try:
+            f=open('testfile.json')
+            data = json.load(f)
+            for item in data['tweets']:
+                user_info['user_id'] = item['user']['id']
+                user_info['user_name'] = item['user']['name']
+                user_info['screenname'] = item['user']['screen_name']
+                user_info['user_desc'] = item['user']['description']
+                user_info['user_loc'] = item['user']['location']
+                user_info['user_source'] = item['source']
+                user_info['verified'] = item['user']['verified']
+                user_info['followers_count'] = item['user']['followers_count']
+                user_info['friends_count'] = item['user']['friends_count']
+                user_info['listed_count'] = item['user']['listed_count']
+                user_info['favourites_count'] = item['user']['favourites_count']
+                user_info['statuses_count'] = item['user']['statuses_count']
+                Result = user_info
+                print(Result.values())
+        except BaseException:
+            print('error')
+        return list(Result.values())
+
     '''def formatting(self):
         try:
             format_data = json.dumps(f, separators=(',', ': '))
@@ -150,13 +192,13 @@ class cleaners():
 # Functionality for analyzing and categorizing content from tweets.
 
 
-class DatabaseConnection:
+class DatabaseConnection():
     def __init__(self):
         try:
             conn_string = "host='localhost' dbname='suppliers' user='danboser' port='5432'"
             # this can be removed once heroku is in use
             self.conn = pg2.connect(conn_string)
-            self.conn.autocommit = False
+            self.conn.autocommit = True
             self.cursor = self.conn.cursor()
             #self.formatted_tweets_filename = formatted_tweets_filename
             print('Database Connected.')
@@ -164,39 +206,20 @@ class DatabaseConnection:
             print('Cannot connect to database')
             # --> to be used when Heroku is involved (DATABASE_URL, sslmode='require')
 
-    def insert_new_record(self):
-        # with open(self.formatted_tweets_filename, 'r', encoding='utf-8') as ft:
-            # data = json.load(ft)
-        f=open('testfile.json')
-        data = json.load(f)
-        #change = data[0]
-        #status = json.dumps(change._json, separators=(',', ': ')
-        #print(data)
+    def insert_tweet_data(self):
+        candor = cleaners.load_tweet_data()
+        print(candor)
+        self.cursor.execute("INSERT INTO tweet_info VALUES (%s, %s, %s, %s, %s, %s)", (candor))
 
-        try:
-            for item in data['tweets']:
-                tweet_info['user_id'] = item['user']['id']
-                tweet_info['tweet_id'] = item['id']
-                tweet_info['text'] = item['text']
-                tweet_info['source'] = item['source']
-                tweet_info['created_at'] = item['created_at']
-                tweet_info['hashtags'] = item['entities']['hashtags']
-                Result = tweet_info
-                print(Result.values())
-                return Result
-        except: EOFError
+    def insert_user_data(self):
+        candor = cleaners.load_user_data()
+        print(candor)
+        self.cursor.execute("INSERT INTO user_info VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (candor))
 
-
-    def malarky(self, Result):
-        self.cursor.execute("INSERT INTO tweet_info VALUES (%s, %s, %s, %s, %s, %s, %s)", (Result.values())
-                            print(Result.values())
-
-
-    def close(self):
+    def closer(self):
         self.conn.commit()
         self.cursor.close()
         self.conn.close()
-
 
 if __name__ == "__main__":
     # hash_tag_list = input("Supply hashtags here. Use quotes, and comma's to delineate:  ")
@@ -211,26 +234,11 @@ if __name__ == "__main__":
     #TwitterName = TwitterClient(twitter_user)
     #twitter_client = TwitterName.get_user_timeline_tweets(num_tweets)
     database_connection = DatabaseConnection()
-    # clean = cleaners(raw_tweets_filename)
+    #clean = cleaners.twitter_info()
     # CreateTable = database_connection.create_table()
-    insert = database_connection.insert_new_record()
-    memory = database_connection.malarky(Result)
+    load = cleaners.load_tweet_data()
+    #insert = database_connection.insert_tweet_data()
+    insert_two = database_connection.insert_user_data()
     # twitter_listener(StreamListener).on_data()
     # streamer = twitter_streamer()
     # streamer_fun = streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
-
-
-# (created_at, tweet_id, text, quotes, reply_count, retweet_count, user_name, screen_name, user_id, user_loc, user_desc, hashtags)  left over value list from the insert command, proper order
-
-'''user_info['user_id'] = item['user']['id_str']
-user_info['user_name'] = item['user']['name']
-user_info['screenname'] = item['user']['screen_name']
-user_info['user_desc'] = item['user']['description']
-user_info['user_loc'] = item['user']['location']
-user_info['user_source'] = item['source']
-user_info['verified'] = item['user']['verified']
-user_info['followers_count'] = item['user']['followers_count']
-user_info['friends_count'] = item['user']['friends_count']
-user_info['listed_count'] = item['user']['listed_count']
-user_info['favourites_count'] = item['user']['favourites_count']
-user_info['statuses_count'] = item['user']['statuses_count']'''
