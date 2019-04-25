@@ -234,6 +234,7 @@ if __name__ == "__main__":
     #TwitterName = TwitterClient(twitter_user)
     #twitter_client = TwitterName.get_user_timeline_tweets(num_tweets)
     database_connection = DatabaseConnection()
+<<<<<<< HEAD
     #clean = cleaners.twitter_info()
     # CreateTable = database_connection.create_table()
     load = cleaners.load_tweet_data()
