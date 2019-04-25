@@ -6,10 +6,17 @@ __pycache__/
 # C extensions
 *.so
 
+dbInsert.py
+
 credentials.py
 .database.ini
 .env
 tweets.json
+tweets2.json
+format.json
+Scratch_pad.txt
+tweeter.json
+testfile.json
 
 # Distribution / packaging
 .Python
