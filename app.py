@@ -19,8 +19,8 @@ access_token_key = os.environ.get('access_token_key')
 access_token_secret = os.environ.get('access_token_secret')
 password = os.environ.get('Password')
 user = os.environ.get('User')
-dbname = os.environ.get('Database')
-'''
+dbname = os.environ.get('Database')'''
+
 
 user_info = {
     'user_id': None,
@@ -137,14 +137,14 @@ class cleaners():
             with open(self.raw_tweets_filename, 'r') as f:
                 data = json.load(f)
             return data
-            #print(data)
+            #print(data.values())
         except BaseException:
             print("error")
 
     def load_tweet_data():
         try:
             f=open('testfile.json')
-            data = json.load(f)
+            data = json.load(f)  # <- len is 1
             for item in data['tweets']:
                 tweet_info['user_id'] = item['user']['id']
                 tweet_info['tweet_id'] = item['id']
@@ -152,12 +152,15 @@ class cleaners():
                 tweet_info['source'] = item['source']
                 tweet_info['created_at'] = item['created_at']
                 tweet_info['hashtags'] = item['entities']['hashtags']
-                Result = tweet_info
-                print(Result.values())
+                Result = tweet_info # <- dict
         except BaseException:
             print('error')
-        return list(Result.values())
+        return list(Result.values()) # <- prints each iterated dict value set
 
+    def tweet_value_set(load_tweet_data):
+        tweet_values = load_tweet_data
+        candor_list.append(tweet_values)
+        print(candor_list)
 
     def load_user_data():
         try:
@@ -177,7 +180,7 @@ class cleaners():
                 user_info['favourites_count'] = item['user']['favourites_count']
                 user_info['statuses_count'] = item['user']['statuses_count']
                 Result = user_info
-                print(Result.values())
+                #print(list(Result.values()))
         except BaseException:
             print('error')
         return list(Result.values())
@@ -208,12 +211,12 @@ class DatabaseConnection():
 
     def insert_tweet_data(self):
         candor = cleaners.load_tweet_data()
-        print(candor)
+        #print(candor)
         self.cursor.execute("INSERT INTO tweet_info VALUES (%s, %s, %s, %s, %s, %s)", (candor))
 
     def insert_user_data(self):
         candor = cleaners.load_user_data()
-        print(candor)
+        #print(candor)
         self.cursor.execute("INSERT INTO user_info VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (candor))
 
     def closer(self):
@@ -234,11 +237,12 @@ if __name__ == "__main__":
     #TwitterName = TwitterClient(twitter_user)
     #twitter_client = TwitterName.get_user_timeline_tweets(num_tweets)
     database_connection = DatabaseConnection()
-    #clean = cleaners.twitter_info()
+    #clean = cleaners.loading()
     # CreateTable = database_connection.create_table()
-    load = cleaners.load_tweet_data()
+    #load = cleaners.load_tweet_data()
+    load2 = cleaners.tweet_value_set()
     #insert = database_connection.insert_tweet_data()
-    insert_two = database_connection.insert_user_data()
+    #insert_two = database_connection.insert_user_data()
     # twitter_listener(StreamListener).on_data()
     # streamer = twitter_streamer()
     # streamer_fun = streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
