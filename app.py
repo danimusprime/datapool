@@ -3,8 +3,8 @@ from tweepy import API
 from tweepy import Stream
 from tweepy import OAuthHandler
 from tweepy import Cursor
-import psycopg2 as pg2
-import psycopg2.extras
+#import psycopg2 as pg2
+#import psycopg2.extras
 # from psycopg2.extras import Json
 # from psycopg2.extensions import AsIs
 # import re
@@ -153,7 +153,7 @@ class cleaners():
                 tweet_info['created_at'] = item['created_at']
                 tweet_info['hashtags'] = item['entities']['hashtags']
                 Result = tweet_info
-                print(Result.values())
+                #print(Result.values())
         except BaseException:
             print('error')
         return list(Result.values())
@@ -222,7 +222,7 @@ class DatabaseConnection():
         self.conn.close()
 
 if __name__ == "__main__":
-    # hash_tag_list = input("Supply hashtags here. Use quotes, and comma's to delineate:  ")
+    hash_tag_list = input("Supply hashtags here. Use quotes, and comma's to delineate:  ")
     # ['poor people', 'war on the poor', 'socio-economics']
     fetched_tweets_filename = "testfile.json"
     raw_tweets_filename = 'testfile.json'
@@ -233,12 +233,12 @@ if __name__ == "__main__":
 
     #TwitterName = TwitterClient(twitter_user)
     #twitter_client = TwitterName.get_user_timeline_tweets(num_tweets)
-    database_connection = DatabaseConnection()
+    #database_connection = DatabaseConnection()
     #clean = cleaners.twitter_info()
     # CreateTable = database_connection.create_table()
     load = cleaners.load_tweet_data()
     #insert = database_connection.insert_tweet_data()
-    insert_two = database_connection.insert_user_data()
+    #insert_two = database_connection.insert_user_data()
     # twitter_listener(StreamListener).on_data()
     # streamer = twitter_streamer()
     # streamer_fun = streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
